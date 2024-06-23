@@ -9,23 +9,6 @@ import VoiceCloningPage from './perspective/VoiceCloningPage';
 function App() {
   return (
     <div className="App">
-      <nav>
-        <ul>
-          <li>
-            <a href="/">Home</a>
-          </li>
-          <li>
-            <a href="/login">Login</a>
-          </li>
-          <li>
-            <a href="/tts">Text To Speech</a>
-          </li>
-          <li>
-            <a href="/voiceclone">Voice Cloning</a>
-          </li>
-        </ul>
-      </nav>
-
       <Routes>
         <Route path='/' element={<HomePage />} />
         <Route path='/login' element={<LoginPage />} />

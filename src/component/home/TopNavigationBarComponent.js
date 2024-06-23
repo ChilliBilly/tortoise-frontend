@@ -3,7 +3,7 @@ import TopNavigationBarFragment from "../../fragment/home/TopNavigationBarFragme
 
 function TopNavigationBarComponent() {
     return (
-        <div className="background-color">
+        <div className="top-navigation-bar">
             <TopNavigationBarFragment></TopNavigationBarFragment>
         </div>
     )

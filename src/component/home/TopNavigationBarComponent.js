@@ -1,6 +1,11 @@
+import './TopNavigationBarComponent.css';
+import TopNavigationBarFragment from "../../fragment/home/TopNavigationBarFragment"
+
 function TopNavigationBarComponent() {
     return (
-        <h1>TopNavigationBarComponent</h1>
+        <div className="background-color">
+            <TopNavigationBarFragment></TopNavigationBarFragment>
+        </div>
     )
 }
 

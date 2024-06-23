@@ -1,6 +1,12 @@
+import TopNavigationBarComponent from "../component/home/TopNavigationBarComponent"
+import MainComponent from "../component/home/MainComponent"
+
 function HomePage() {
     return (
-        <h1>HomePage</h1>
+        <div className="homepage">
+            <TopNavigationBarComponent />
+            <MainComponent />
+        </div>
     )
 }
 

@@ -1,6 +1,12 @@
+import FirstDescriptionFragment from "../../fragment/home/FirstDescriptionFragment"
+import './MainComponent.css';
+
+
 function MainComponent() {
     return (
-        <div>MainComponent</div>
+        <div className="content-container">
+            <FirstDescriptionFragment />
+        </div>
     )
 }
 

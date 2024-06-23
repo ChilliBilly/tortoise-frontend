@@ -1,6 +1,6 @@
 function MainComponent() {
     return (
-        <h1>MainComponent</h1>
+        <div>MainComponent</div>
     )
 }
 

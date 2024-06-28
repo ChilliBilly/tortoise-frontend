@@ -1,0 +1,55 @@
+.custom-list-container {
+    margin-left: 10px;
+}
+
+.custom-list-header {
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.custom-ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.custom-list-item {
+    margin-bottom: 10px;
+}
+
+.custom-button {
+    width: 100%;
+    border: none;
+    border-radius: 0;
+    background-color: white;
+    color: black;
+    text-align: left;
+    padding: 10px;
+}
+
+.custom-button.custom-lg {
+    font-size: 1.5rem;
+    /* Adjust font size for large buttons */
+}
+
+.custom-button.custom-sm {
+    font-size: 0.8rem;
+    /* Adjust font size for small buttons */
+}
+
+.image-content img {
+    max-width: 100%;
+    /* Ensure the image does not exceed its container's width */
+    height: auto;
+    /* Allow the height to adjust proportionally */
+    display: block;
+    /* Ensure the image is displayed as a block element */
+
+    /* Set the dimensions to make the image a square */
+    width: 50px;
+    /* Adjust the width to the desired size */
+    height: 50px;
+    /* Set the height to match the width, making it a square */
+    object-fit: cover;
+    /* Optional: Maintain aspect ratio and cover the entire container */
+    border-radius: 50px;
+}

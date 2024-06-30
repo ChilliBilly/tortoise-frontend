@@ -31,7 +31,7 @@ function TopNavigationBarFragment() {
                         <Nav.Link href="/login/signIn">Sign In</Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
-                        <Nav.Link eventKey="/login/signUp">Sign Up</Nav.Link>
+                        <Nav.Link href="/signup">Sign Up</Nav.Link>
                     </Nav.Item>
                 </Nav>
             </div>

@@ -1,6 +1,10 @@
+import SignUpFragment from "../../fragment/login/SignUpFragment"
+
 function SignUpComponent() {
     return (
-        <h1>SignUpComponent</h1>
+        <div className="signup-section">
+            <SignUpFragment></SignUpFragment>
+        </div>
     )
 }
 

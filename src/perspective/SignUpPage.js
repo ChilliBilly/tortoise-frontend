@@ -1,5 +1,5 @@
 import './SignUp.css'
-import GoogleLogo from '../resources/images/google_logo_icon.svg'
+import GoogleLogo from '../resources/images/google_logo.png'
 import SignUpBackground from '../resources/images/signup_background.jpg'
 
 function SignUpPage() {

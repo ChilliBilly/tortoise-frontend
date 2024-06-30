@@ -45,11 +45,11 @@
     /* Ensure the image is displayed as a block element */
 
     /* Set the dimensions to make the image a square */
-    width: 50px;
+    width: 30px;
     /* Adjust the width to the desired size */
-    height: 50px;
+    height: 30px;
     /* Set the height to match the width, making it a square */
     object-fit: cover;
     /* Optional: Maintain aspect ratio and cover the entire container */
-    border-radius: 50px;
+    border-radius: 30px;
 }

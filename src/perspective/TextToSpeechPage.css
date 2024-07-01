@@ -1,0 +1,12 @@
+.flex-container {
+    display: flex;
+    height: 100vh;
+    /* Example: Full viewport height */
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    /* Grow to fill remaining space */
+}

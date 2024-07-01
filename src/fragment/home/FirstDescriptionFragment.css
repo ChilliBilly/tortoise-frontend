@@ -4,9 +4,9 @@
     /* Distribute space between text and image */
     align-items: center;
     /* Vertically center the content */
-    width: 1150px;
+    width: 100vw;
     /* Ensure the container takes the full width */
-    padding: 20px;
+    padding: 0 400px;
 }
 
 .text-content {

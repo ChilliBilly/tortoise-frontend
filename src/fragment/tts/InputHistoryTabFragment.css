@@ -1,0 +1,53 @@
+.minimalist-scrollbar {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: calc(100% - 140px);
+    padding-left: 60px;
+    border-width: 0;
+    font-size: 20px;
+    outline: none;
+    padding-bottom: 20px;
+    resize: none;
+    overflow: auto;
+}
+
+/* WebKit browsers */
+.minimalist-scrollbar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.minimalist-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 8px;
+    /* Rounded corners for the track */
+}
+
+.minimalist-scrollbar::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 8px;
+    /* Rounded corners for the thumb */
+}
+
+.minimalist-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #ccc;
+}
+
+.minimalist-scrollbar::-webkit-scrollbar-button {
+    display: none;
+    height: 0;
+    width: 0;
+}
+
+/* Firefox */
+.minimalist-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #eeeeee transparent;
+}
+
+/* Additional approach for other browsers */
+.minimalist-scrollbar::-webkit-scrollbar-corner {
+    background: transparent;
+    border-radius: 8px;
+    /* Rounded corners for the corner */
+}

@@ -28,7 +28,7 @@ function TopNavigationBarFragment() {
 
                 <Nav className="right-nav">
                     <Nav.Item>
-                        <Nav.Link href="/login/signIn">Sign In</Nav.Link>
+                        <Nav.Link href="/login">Sign In</Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
                         <Nav.Link href="/signup">Sign Up</Nav.Link>

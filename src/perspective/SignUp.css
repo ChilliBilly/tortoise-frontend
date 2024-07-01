@@ -33,11 +33,20 @@ body {
   width: 100%;
 }
 
-.logo {
-  font-size: 20px;
+.logo-container {
+  font-size: 19px;
   font-weight: bold;
-  margin-top: 10px;
+  margin-top: 20px;
+  margin-left: 20px;
   margin-bottom: 20px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.logo-container:hover {
+  cursor: pointer;
+  text-decoration: none; 
+  color: inherit; 
 }
 
 h2 {
@@ -55,9 +64,24 @@ input {
   padding: 10px;
   margin-bottom: 15px;
   border: 1px solid #ccc;
-  border-radius: 10px;
+  border-radius: 15px;
   width: 100%;
   box-sizing: border-box; 
+}
+
+.button-container {
+  width: 100%;
+}
+
+.signup-button {
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  width: 100%;
 }
 
 button {
@@ -80,12 +104,10 @@ button {
   background-color: #fff;
   border: 1px solid #ccc;
   border-radius: 15px;
-  padding: 10px 20px;
   cursor: pointer;
   transition: background-color 0.3s ease;
   margin-bottom: 10px;
   max-width: 400px; 
-
 }
 
 .google-logo {
@@ -95,6 +117,31 @@ button {
   transition: width 0.3s ease, height 0.3s ease;
 }
 
+.page-logo {
+  width: 30px;
+  height: 30px;
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+.forgot-password-container {
+  text-align: left;
+  margin-top: -5px;
+  margin-left: 2px;
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+.forgot-password {
+  color: #6e6e6e;
+  text-decoration: none;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 
 .image-container {
   flex: 1.6;
@@ -112,6 +159,26 @@ button {
 }
 
 .or {
-  margin: 10px;
+  display: flex;
+  align-items: center;
   text-align: center;
+  color: #6e6e6e;
+  margin: 20px 0;
+  width: 100%;
+  max-width: 400px;
+}
+
+.or::before,
+.or::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #ddd;
+}
+
+.or:not(:empty)::before {
+  margin-right: .25em;
+}
+
+.or:not(:empty)::after {
+  margin-left: .25em;
 }

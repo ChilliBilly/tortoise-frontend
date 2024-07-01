@@ -1,11 +1,14 @@
 import './SignUp.css'
 import GoogleLogo from '../resources/images/google_logo.png'
 import SignUpBackground from '../resources/images/signup_background.jpg'
+import PageLogo from '../resources/images/logo.png'
 
 function SignUpPage() {
     return (
         <div className="signup-container">
-          <div className="logo">Name</div>
+          <a href="/" className="logo-container">
+            <img src={PageLogo} alt="Website Logo" className="page-logo" /> Name
+          </a>
           <div className="form-container">
 
             <form>
@@ -19,8 +22,8 @@ function SignUpPage() {
               <div className="input-container">
                 <input type="password" placeholder="Password" />
               </div>
-              <div className="form-button">
-                <button type="submit">Sign Up</button>
+              <div className="button-container">
+                <button type="submit" className="signup-button">Sign Up</button>
               </div>
             </form>
 
@@ -28,7 +31,7 @@ function SignUpPage() {
             <button className="google-signin-button">
               Sign up with Google <img src={GoogleLogo} alt="Google logo" className="google-logo" />
             </button>
-            <p>Already have an account? <a href="/login/signIn">Sign In</a></p>
+            <p>Already have an account? <a href="/login">Sign In</a></p>
           </div>
 
           <div className="image-container">

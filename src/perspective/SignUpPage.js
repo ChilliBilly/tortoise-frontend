@@ -1,9 +1,9 @@
 import './SignUp.css'
 import GoogleLogo from '../resources/images/google_logo.png'
-import SignUpBackground from '../resources/images/signin-background.jpg'
+import SignUpBackground from '../resources/images/signup_background.jpg'
 import PageLogo from '../resources/images/logo.png'
 
-function LoginPage() {
+function SignUpPage() {
     return (
         <div className="signup-container">
           <a href="/" className="logo-container">
@@ -12,26 +12,26 @@ function LoginPage() {
           <div className="form-container">
 
             <form>
-            <h2 className='signup-text'>Sign in</h2>
+            <h2 className='signup-text'>Sign up</h2>
+              <div className="input-container">
+                <input type="text" placeholder="Your Name" />
+              </div>
               <div className="input-container">
                 <input type="email" placeholder="Email" />
               </div>
               <div className="input-container">
                 <input type="password" placeholder="Password" />
               </div>
-              <div className="forgot-password-container">
-                 <a href="/forgot-password" className="forgot-password">Forgot Password</a>
-              </div>
               <div className="button-container">
-                <button type="submit" className="signup-button">Sign In</button>
+                <button type="submit" className="signup-button">Sign Up</button>
               </div>
             </form>
 
             <div className="or">or</div>
             <button className="google-signin-button">
-              Continue with Google <img src={GoogleLogo} alt="Google logo" className="google-logo" />
+              Sign up with Google <img src={GoogleLogo} alt="Google logo" className="google-logo" />
             </button>
-            <p>Don't have an account? <a href="/signup">Sign Up</a></p>
+            <p>Already have an account? <a href="/login">Sign In</a></p>
           </div>
 
           <div className="image-container">
@@ -42,4 +42,4 @@ function LoginPage() {
     );
 }   
 
-export default  LoginPage
+export default  SignUpPage

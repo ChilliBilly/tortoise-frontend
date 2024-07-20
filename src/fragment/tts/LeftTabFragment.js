@@ -9,6 +9,7 @@ import gearGray from '../../resources/images/gear-gray.png'
 import fileGray from '../../resources/images/file-gray.png'
 import questionMarkGray from '../../resources/images/questionmark-gray.png'
 import logo from '../../resources/images/logo.png'
+import LeftTabItem from './LeftTabItem'
 
 function LeftTabFragment() {
     return (
@@ -23,35 +24,17 @@ function LeftTabFragment() {
                 <div style={{ margin: '0', padding: '0', width: '100%' }}>
                     <p style={{ color: '#757575', fontSize: '11px', margin: '0', padding: '0', fontWeight: 'bold' }}>MAIN</p>
                     <div style={{ margin: '0', padding: '0', width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '10px', gap: '15px' }}>
-                        <div style={{ margin: '0', padding: '0', width: '100%', display: 'flex', flexDirection: 'row', gap: '15px', height: '30px', alignItems: 'center' }}>
-                            <img src={homeGray} style={{ width: '15px', height: '15px' }} alt="Description" />
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0' }}>Home</p>
-                        </div>
-                        <div style={{ margin: '0', padding: '0', width: '100%', display: 'flex', flexDirection: 'row', gap: '15px', height: '30px', alignItems: 'center' }}>
-                            <img src={ConvertTextBlue} style={{ width: '15px', height: '15px' }} alt="Description" />
-                            <p style={{ color: '#367AFF', fontSize: '14px', margin: '0', padding: '0' }}>Convert Text</p>
-                        </div>
-                        <div style={{ margin: '0', padding: '0', width: '100%', display: 'flex', flexDirection: 'row', gap: '15px', height: '30px', alignItems: 'center' }}>
-                            <img src={MicroGray} style={{ width: '15px', height: '15px' }} alt="Description" />
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0' }}>Voice Cloning</p>
-                        </div>
-                        <div style={{ margin: '0', padding: '0', width: '100%', display: 'flex', flexDirection: 'row', gap: '15px', height: '30px', alignItems: 'center' }}>
-                            <img src={CartGray} style={{ width: '15px', height: '15px' }} alt="Description" />
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0' }}>Buy Package</p>
-                        </div>
-                        <div style={{ margin: '0', padding: '0', width: '100%', display: 'flex', flexDirection: 'row', gap: '15px', height: '30px', alignItems: 'center' }}>
-                            <img src={bookGray} style={{ width: '15px', height: '15px' }} alt="Description" />
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0' }}>User Guide</p>
-                        </div>
+                        <LeftTabItem src={homeGray} alt="Home Icon" text="Home" />
+                        <LeftTabItem src={ConvertTextBlue} alt="Home Icon" text="Convert Text" />
+                        <LeftTabItem src={MicroGray} alt="Home Icon" text="Voice Cloning" />
+                        <LeftTabItem src={CartGray} alt="Home Icon" text="Buy Package" />
+                        <LeftTabItem src={bookGray} alt="Home Icon" text="User Guide" />
                     </div>
                 </div>
                 <div style={{ margin: '0', padding: '0', width: '100%' }}>
                     <p style={{ color: '#757575', fontSize: '11px', margin: '0', padding: '0', fontWeight: 'bold' }}>SETTING</p>
                     <div style={{ margin: '0', padding: '0', width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '10px', gap: '15px' }}>
-                        <div style={{ margin: '0', padding: '0', width: '100%', display: 'flex', flexDirection: 'row', gap: '15px', height: '30px', alignItems: 'center' }}>
-                            <img src={gearGray} style={{ width: '15px', height: '15px' }} alt="Description" />
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0' }}>Settings</p>
-                        </div>
+                        <LeftTabItem src={gearGray} alt="Home Icon" text="Settings" />
                     </div>
                 </div>
             </div>

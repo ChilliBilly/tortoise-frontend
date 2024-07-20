@@ -1,8 +1,8 @@
 import HeaderTabFragment from "../../fragment/tts/HeaderTabFragment";
 
-function HeaderTabComponent() {
+function HeaderTabComponent({title, subtitle}) {
     return (
-        <HeaderTabFragment />
+        <HeaderTabFragment title={title} subtitle={subtitle} />
     )
 }
 

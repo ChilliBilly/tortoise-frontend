@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './AddVoiceComponent.css';
+import closeIcon from '../../resources/images/close-icon.png'
+import addIcon from '../../resources/images/add-icon.png'
 import VoiceCardFragment from '../../fragment/clone/VoiceCardFragment';
-
 
 function AddVoiceComponent() {
     const [voices, setVoices] = useState([]);
@@ -44,33 +45,42 @@ function AddVoiceComponent() {
                     <VoiceCardFragment key={index} voice={voice} onDelete={handleDeleteVoice} />
                 ))}
                 <div className="add-voice-card" onClick={() => setShowForm(true)}>
-                    <span>+</span>
+                    <div className="add-icon-wrapper">
+                        <img src={addIcon} alt="Add" className="add-icon" />
+                    </div>
                 </div>
             </div>
             {showForm && (
-                <div className="add-voice-form">
-                    <input
-                        type="text"
-                        name="title"
-                        placeholder="Title"
-                        value={newVoice.title}
-                        onChange={handleInputChange}
-                    />
-                    <input
-                        type="text"
-                        name="description"
-                        placeholder="Description"
-                        value={newVoice.description}
-                        onChange={handleInputChange}
-                    />
-                    <input
-                        type="file"
-                        name="audio"
-                        accept="audio/*"
-                        onChange={handleFileChange}
-                    />
-                    <button onClick={handleAddVoice}>Add Voice</button>
-                    <button onClick={() => setShowForm(false)}>Cancel</button>
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <button className="modal-close-button" onClick={() => setShowForm(false)}>
+                            <img src={closeIcon} alt="Close" />
+                        </button>
+                        <div className="add-voice-form">
+                            <h3>Add a new voice</h3>
+                            <input
+                                type="text"
+                                name="title"
+                                placeholder="Title"
+                                value={newVoice.title}
+                                onChange={handleInputChange}
+                            />
+                            <input
+                                type="text"
+                                name="description"
+                                placeholder="Description"
+                                value={newVoice.description}
+                                onChange={handleInputChange}
+                            />
+                            <input
+                                type="file"
+                                name="audio"
+                                accept="audio/*"
+                                onChange={handleFileChange}
+                            />
+                            <button onClick={handleAddVoice}>Add Voice</button>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

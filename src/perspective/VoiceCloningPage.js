@@ -1,8 +1,8 @@
 import './TextToSpeechPage.css';
 import HeaderTabComponent from '../component/tts/HeaderTabComponent';
-import InputTabComponent from '../component/tts/InputTabComponent';
 import LeftTabComponent from '../component/tts/LeftTabComponent';
 import AddVoiceComponent from '../component/clone/AddVoiceComponent';
+import SoundDisplayTabComponent from '../component/tts/SoundDisplayTabComponent';
 
 function VoiceCloningPage() {
     return (
@@ -19,6 +19,9 @@ function VoiceCloningPage() {
                 <div style={{ margin: '0', padding: '0', height: '89%', width: '100%', overflowY: 'hidden' }}>
                     <AddVoiceComponent />
                 </div>
+                {/* <div style={{ padding: '0', height: '100%', width: '70%' }}>
+                    <SoundDisplayTabComponent />
+                </div> */}
             </div>
         </div>
     );

@@ -9,11 +9,12 @@ function SignUpPage() {
     const [username, setUsername] = useState(''); 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [role, setRole] = useState('REGULAR'); // Default role
     const [error, setError] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        const role = 'REGULAR'; // Automatically set the role to REGULAR
 
         try {
             const response = await createUser({ username, email, password, role }); 
@@ -33,7 +34,7 @@ function SignUpPage() {
             <div className="form-container">
                 <form onSubmit={handleSubmit}>
                     <h2 className='signup-text'>Sign up</h2>
-                    <div className="input-container">
+                    <div className="input-container">     
                         <input
                             type="text"
                             placeholder="Username"
@@ -56,15 +57,6 @@ function SignUpPage() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
-                    </div>
-                    <div className="input-container">
-                        <select
-                            value={role}
-                            onChange={(e) => setRole(e.target.value)}
-                        >
-                            <option value="REGULAR">Regular</option>
-                            <option value="ADMIN">Admin</option>
-                        </select>
                     </div>
                     {error && <p className="error-message">{error}</p>}
                     <div className="button-container">

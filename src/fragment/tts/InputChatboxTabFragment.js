@@ -9,8 +9,8 @@ import audioFile from '../../resources/audios/voice-4-long.wav';
 import { faUndoAlt, faRedoAlt, faAngleDown, faDownload, faPause, faPlay, faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSpring, animated } from 'react-spring';
-import { getLiveTabName, getChatBoxSession } from '../../service/DataService';
-import { createNewTab, changeTab, initializeSessions, initApp } from '../../redux/actions';
+import { getLiveTabByUserId, getChatBoxSession, createTab, createTabGeneration } from '../../service/DataService';
+import { createNewTab, changeTab, initApp } from '../../redux/actions';
 
 const ItemType = {
     TAB: 'tab',
@@ -67,9 +67,9 @@ function Tab({ item, index, moveTab, setSelectedTabId, selectedTabId, handleTabR
                         console.log(`Tab ${item.id} clicked`);
                         setSelectedTabId(item.id);
                     }}
-                    onContextMenu={(e) => handleTabRightClick(e, item.id, item.tabName)}
+                    onContextMenu={(e) => handleTabRightClick(e, item.id, item.tab_name)}
                 >
-                    {item.tabName}
+                    {item.tab_name}
                 </p>
             )}
         </animated.div>
@@ -83,6 +83,9 @@ function InputChatboxTabFragment() {
     const chatBoxSessionsByTab = useSelector((state) => state.tabs.present.chatBoxSessionsByTab);
     const isEditing = useSelector((state) => state.tabs.present.isEditing);
     const newTabName = useSelector((state) => state.tabs.present.newTabName);
+
+    // Define userId as 1
+    const userId = 1;
 
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
@@ -101,16 +104,50 @@ function InputChatboxTabFragment() {
     const maxCharCount = 5000;
 
     useEffect(() => {
-        const tabs = getLiveTabName();
-        const initialSessions = getChatBoxSession(1);
-        dispatch(initApp(tabs, initialSessions));
+        const fetchData = async () => {
+            let initialSessions = [{ text: '' }]; // Default value for sessions
+
+            try {
+                // Fetch the live tabs by user ID
+                const tabs = await getLiveTabByUserId(userId);
+                // Attempt to fetch the initial chat box session if there are tabs available
+                if (tabs.data.length > 0) {
+                    try {
+                        initialSessions = await getChatBoxSession(userId, tabs.data[0].id);
+                        initialSessions = [{ text: initialSessions.data.text_entry_content }]
+                    } catch (sessionError) {
+                        console.error("Error fetching chat box session:", sessionError);
+                        // Set default value for initialSessions if an error occurs
+                        initialSessions = [{ text: '' }];
+                    }
+                }
+                console.log(initialSessions)
+                dispatch(initApp(tabs, initialSessions));
+                console.log("init app finished");
+            } catch (error) {
+                console.error("Error fetching tabs:", error);
+                dispatch(initApp([], [{ text: '' }])); // Use actual tabs if they were fetched
+            }
+        };
+        fetchData();
     }, [dispatch]);
 
     useEffect(() => {
-        const currentSessions = chatBoxSessionsByTab[selectedTabId] || [];
-        const initialCharCount = currentSessions.reduce((acc, session) => acc + session.text.length, 0);
+        const currentSessions = Array.isArray(chatBoxSessionsByTab[selectedTabId]) ? chatBoxSessionsByTab[selectedTabId] : [];
+        const initialCharCount = currentSessions.reduce((acc, session) => {
+            return acc + (session.text ? session.text.length : 0);
+        }, 0);
         setCharCount(initialCharCount);
     }, [selectedTabId, chatBoxSessionsByTab]);
+
+    const handleGenerateOuput = async () => {
+        try {
+            console.log("activated handleGenerateOuput")
+            await createTabGeneration({ user_id: userId, tab_id: selectedTabId, text_entry_content: chatBoxSessionsByTab[selectedTabId][0].text })
+        } catch (error) {
+            console.error("Error creating tab generation:", error);
+        }
+    }
 
     const handleTextChange = (index, text) => {
         if (text.length <= maxCharCount) {
@@ -197,16 +234,39 @@ function InputChatboxTabFragment() {
         setCurrentTime(newTime);
     };
 
-    const handleNewTab = () => {
-        const newTabId = tabData.length + 1;
-        const newTab = { id: newTabId, tabName: `Tab ${newTabId}` };
-        const initialSessions = [{ text: '' }];
-        dispatch(createNewTab(newTab, newTabId, initialSessions));
+    const handleNewTab = async () => {
+        try {
+            const newTabId = tabData.length + 1;
+            const newTab = { id: newTabId, tab_name: `Tab ${newTabId}` };
+            await createTab({ user_id: userId, tab_name: newTab.tab_name });
+            const initialSessions = [{ text: '' }];
+
+            // Dispatch the action to create a new tab
+            dispatch(createNewTab(newTab, newTabId, initialSessions));
+        } catch (error) {
+            console.error("Error creating tab:", error);
+        }
     };
 
-    const handleTabChange = (tabId) => {
-        const sessions = chatBoxSessionsByTab[tabId] || getChatBoxSession(tabId);
-        dispatch(changeTab(tabId, sessions));
+    const handleTabChange = async (tabId) => {
+        try {
+            // Check if sessions already exist in chatBoxSessionsByTab
+            let sessions = chatBoxSessionsByTab[tabId];
+
+            if (!sessions) {
+                try {
+                    sessions = await getChatBoxSession(userId, tabId);
+                    sessions = [{ text: sessions.data.text_entry_content }]
+                } catch (sessionError) {
+                    console.error("Error fetching chat box session:", sessionError);
+                    // Set default value for initialSessions if an error occurs
+                    sessions = [{ text: '' }];
+                }
+            }
+            dispatch(changeTab(tabId, sessions));
+        } catch (error) {
+            console.error("Error switching tab:", error);
+        }
     };
 
     const handleTabRightClick = (e, id, name) => {
@@ -325,7 +385,7 @@ function InputChatboxTabFragment() {
         };
     }, [isScrolling]);
 
-    if (!tabData.length) return <div>Loading...</div>;
+    // if (!tabData.length) return <div>Loading...</div>;
 
     const currentSessions = chatBoxSessionsByTab[selectedTabId] || [];
 
@@ -352,7 +412,7 @@ function InputChatboxTabFragment() {
                             cursor: isMiddleMouseDown ? 'grab' : 'pointer'
                         }}
                     >
-                        {tabData.map((item, index) => (
+                        {tabData.length > 0 && tabData.map((item, index) => (
                             <Tab
                                 key={item.id}
                                 item={item}
@@ -380,29 +440,33 @@ function InputChatboxTabFragment() {
                     </div>
                 </div>
                 <div style={{ width: '100%', height: '100%', margin: '0', padding: '0', paddingTop: '10px', paddingRight: '30px' }}>
-                    {currentSessions.map((item, index) => (
-                        <textarea
-                            key={index}
-                            placeholder='Enter your text here...'
-                            className="minimalist-scrollbar"
-                            style={{
-                                margin: '0',
-                                padding: '0',
-                                width: '100%',
-                                height: 'calc(100% - 140px)',
-                                paddingLeft: '60px',
-                                borderWidth: '0',
-                                fontSize: '20px',
-                                outline: 'none',
-                                paddingBottom: '60px',
-                                backgroundColor: 'white', // Ensure background is white to prevent overlap
-                                zIndex: 1,
-                                userSelect: 'none' // Ensure it's on top of other elements
-                            }}
-                            value={item.text} // Use value to ensure textarea reflects state changes
-                            onChange={(e) => handleTextChange(index, e.target.value)}
-                        />
-                    ))}
+                    {Array.isArray(currentSessions) && currentSessions.length > 0 ? (
+                        currentSessions.map((item, index) => (
+                            <textarea
+                                key={index}
+                                placeholder='Enter your text here...'
+                                className="minimalist-scrollbar"
+                                style={{
+                                    margin: '0',
+                                    padding: '0',
+                                    width: '100%',
+                                    height: 'calc(100% - 140px)',
+                                    paddingLeft: '60px',
+                                    borderWidth: '0',
+                                    fontSize: '20px',
+                                    outline: 'none',
+                                    paddingBottom: '60px',
+                                    backgroundColor: 'white', // Ensure background is white to prevent overlap
+                                    zIndex: 1,
+                                    userSelect: 'none' // Ensure it's on top of other elements
+                                }}
+                                value={item.text} // Use value to ensure textarea reflects state changes
+                                onChange={(e) => handleTextChange(index, e.target.value)}
+                            />
+                        ))
+                    ) : (
+                        <p>No sessions available</p> // You can replace this with any fallback UI you'd like
+                    )}
                 </div>
 
                 <div style={{ padding: '0', margin: '0', paddingLeft: '60px', paddingRight: '30px', display: 'flex', flexDirection: 'column', width: '100%', position: 'absolute', bottom: '0', height: '150px', justifyContent: 'end', gap: '20px', backdropFilter: 'blur(10px)', backgroundColor: 'rgba(255, 255, 255, 0.5)' }}>
@@ -416,7 +480,7 @@ function InputChatboxTabFragment() {
                                 <p className={isLimitReached ? 'char-count-limit' : ''} style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0' }}>{charCount}</p>
                                 <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0' }}>/{maxCharCount}</p>
                             </div>
-                            <p style={{ color: '#367AFF', fontSize: '14px', margin: '0', padding: '0' }}>Generate Speech</p>
+                            <p style={{ color: '#367AFF', fontSize: '14px', margin: '0', padding: '0', cursor: 'pointer' }} onClick={handleGenerateOuput}>Generate Speech</p>
                         </div>
                     </div>
                     <div style={{ width: '100%', padding: '0', margin: '0', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', justifyContent: 'end', height: '50px', marginBottom: '30px' }}>

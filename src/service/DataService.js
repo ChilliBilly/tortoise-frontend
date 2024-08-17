@@ -1,4 +1,14 @@
 import { tab } from "@testing-library/user-event/dist/tab";
+import axios from "axios";
+const API_URL = "http://localhost:5000/api/v1";
+
+const api = axios.create({
+    baseURL: API_URL,
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
+
 
 export const testHistoryData = {
     items: [
@@ -97,6 +107,48 @@ export const getLiveTabName = () => {
     return liveTabName.items;
 }
 
-export const getChatBoxSession = (tabId) => {
-    return currentChatBoxSession.items.filter(session => session.tabId === tabId);
+// GET
+
+export const getLiveTabByUserId = (user_id) => api.get(`/users/${user_id}/tabs`);
+export const getChatBoxSession = (user_id, tab_id) => api.get(`/users/${user_id}/tabs/${tab_id}/tab_generations/1st`);
+
+// POST
+export const createTab = async (tab) => {
+    try {
+        const response = await api.post(`/users/${tab.user_id}/tabs`, tab);
+        return response.data;
+    } catch (error) {
+        if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            throw error.response.data;
+        } else if (error.request) {
+            // The request was made but no response was received
+            throw new Error("No response received from server");
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            throw new Error("Error setting up the request");
+        }
+    }
 };
+
+
+export const createTabGeneration = async (tabGeneration) => {
+    try {
+        const response = await api.post(`/users/${tabGeneration.user_id}/tabs/${tabGeneration.tab_id}/tab_generations`,
+            { tab_id: tabGeneration.tab_id, text_entry_content: tabGeneration.text_entry_content, language: "en" });
+        return response.data;
+    } catch (error) {
+        if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            throw error.response.data;
+        } else if (error.request) {
+            // The request was made but no response was received
+            throw new Error("No response received from server");
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            throw new Error("Error setting up the request");
+        }
+    }
+}

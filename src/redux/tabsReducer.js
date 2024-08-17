@@ -2,7 +2,7 @@ import produce from 'immer';
 import { CREATE_NEW_TAB, CHANGE_TAB, INIT_APP } from './actions';
 const initialState = {
     tabData: [],
-    selectedTabId: 1,
+    selectedTabId: 0,
     chatBoxSessionsByTab: {},
     isEditing: null,
     newTabName: '',
@@ -13,6 +13,7 @@ const tabsReducer = produce((draft, action) => {
     switch (action.type) {
         case 'SET_TAB_DATA':
             draft.tabData = action.payload;
+            // draft.tabData = Array.isArray(action.payload) ? action.payload : [];
             break;
         case 'SET_SELECTED_TAB_ID':
             draft.selectedTabId = action.payload;
@@ -45,8 +46,9 @@ const tabsReducer = produce((draft, action) => {
             draft.chatBoxSessionsByTab[action.payload.tabId] = action.payload.sessions;
             break;
         case INIT_APP:
-            draft.tabData = action.payload.tabs;
-            draft.chatBoxSessionsByTab[1] = action.payload.initialSessions;
+            draft.tabData = Array.isArray(action.payload.tabs.data) ? action.payload.tabs.data : [];
+            draft.chatBoxSessionsByTab[0] = action.payload.initialSessions;
+            draft.selectedTabId = draft.tabData.length > 0 ? draft.tabData[0].id : null;
             break;
         // Add other cases as needed
         default:

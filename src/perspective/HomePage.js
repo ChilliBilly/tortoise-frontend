@@ -1,10 +1,10 @@
-import TopNavigationBarComponent from "../component/home/TopNavigationBarComponent"
+import TopNavbarComponent from "../component/home/TopNavbarComponent"
 import MainComponent from "../component/home/MainComponent"
 
 function HomePage() {
     return (
         <div className="homepage">
-            <TopNavigationBarComponent />
+            <TopNavbarComponent />
             <MainComponent />
         </div>
     )

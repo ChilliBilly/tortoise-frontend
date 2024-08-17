@@ -1,0 +1,53 @@
+.top-navbar {
+    background-color: white;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 10px 50px; /* Added more padding */
+    z-index: 1000;
+}
+
+.brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.brand img {
+    margin-right: 10px;
+}
+
+.top-navbar .nav-item {
+    margin-left: 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #1a1a1a;
+}
+
+.top-navbar .nav-item:hover {
+    color: #4a00e0;
+}
+
+.sign-up-button {
+    margin-left: 20px;
+    background-color: #4a00e0 !important;
+    border: none;
+    padding: 5px 15px;
+    color: #fff;
+    border-radius: 25px !important;
+    font-weight: bold !important;
+}
+
+.sign-up-button:hover {
+    background-color: #8e2de2 !important;
+}
+
+@media (max-width: 768px) {
+    .top-navbar .nav-item {
+        margin-left: 10px;
+        font-size: 0.9rem;
+    }
+
+    .sign-up-button {
+        padding: 5px 10px;
+    }
+}

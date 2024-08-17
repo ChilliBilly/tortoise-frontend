@@ -13,7 +13,7 @@ function TopNavigationBarFragment() {
 
                 <Nav className="center-nav">
                     <Nav.Item>
-                        <Nav.Link eventKey="link-1">Services</Nav.Link>
+                        <Nav.Link href="/tts">Services</Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
                         <Nav.Link eventKey="link-1">API</Nav.Link>

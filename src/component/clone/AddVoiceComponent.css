@@ -1,0 +1,98 @@
+/* AddVoiceComponent.css */
+.voice-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 40px;
+    margin-top: 10px; 
+    padding-left: 20px; 
+}
+
+.add-voice-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    cursor: pointer;
+    height: 150px;
+    width: 250px;
+    font-size: 24px;
+    color: #ccc;
+}
+
+.add-icon-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+}
+
+.add-icon {
+    width: 40x; 
+    height: 40px; 
+}
+
+.add-voice-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.add-voice-form input,
+.add-voice-form button {
+    margin-bottom: 5px;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 20px;
+}
+
+.add-voice-form button {
+    margin-top: 10px;
+    cursor: pointer;
+    background-color: black;
+}
+
+/* Modal styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.863); /* Semi-transparent white */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    position: relative;
+    background: #ffff;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+}
+
+.modal-close-button {
+    position: absolute;
+    top: 5px;
+    left: 220px;
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #333;
+}
+
+.modal-close-button:hover {
+    color: #ff0000;
+}
+
+.modal-close-button img {
+    width: 20px; 
+    height: 20px; 
+}

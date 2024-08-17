@@ -3,7 +3,7 @@ import GoogleLogo from '../resources/images/google_logo.png'
 import SignUpBackground from '../resources/images/signin-background.jpg'
 import PageLogo from '../resources/images/logo.png'
 import { useState } from 'react';
-import { login } from '../service/api'; // Import the login function
+import { login } from '../service/api'; 
 
 function LoginPage() {
     const [username, setUsername] = useState('');

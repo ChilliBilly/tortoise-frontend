@@ -3,7 +3,7 @@ import GoogleLogo from '../resources/images/google_logo.png';
 import SignUpBackground from '../resources/images/signup_background.jpg';
 import PageLogo from '../resources/images/logo.png';
 import { useState } from 'react';
-import { createUser } from '../service/api'; // Import the createUser function
+import { createUser } from '../service/api'; 
 
 function SignUpPage() {
     const [username, setUsername] = useState(''); 
@@ -16,7 +16,7 @@ function SignUpPage() {
         e.preventDefault();
 
         try {
-            const response = await createUser({ username, email, password, role }); // Include role in the request
+            const response = await createUser({ username, email, password, role }); 
             console.log('Signup successful:', response);
             // Redirect to login or dashboard
             window.location.href = '/tts'; 

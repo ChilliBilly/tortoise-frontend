@@ -91,12 +91,12 @@ export const liveTabName = {
     ]
 }
 
-export const gettestHistoryData = () => {
-    return testHistoryData.items;
+export const getHistoryData = (user_id, tab_id) => {
+    return api.get(`/users/${user_id}/tabs/${tab_id}/tab_generations/`);
 };
 
-export const getTestAllHistoryData = () => {
-    return testAllHistoryData.items;
+export const getAllHistoryData = (user_id) => {
+    return api.get(`/users/${user_id}/tab_generations/`);
 }
 
 export const getCurrentChatBoxSession = () => {

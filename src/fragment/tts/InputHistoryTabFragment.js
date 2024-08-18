@@ -1,22 +1,31 @@
 import './InputHistoryTabFragment.css';
 import playButtonLightGray from '../../resources/images/playbutton-light-gray.png'
 import downloadButtonGray from '../../resources/images/download-gray.png'
-import { gettestHistoryData, getTestAllHistoryData } from '../../service/DataService';
+import { getHistoryData, getAllHistoryData } from '../../service/DataService';
 import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 function InputHistoryTabFragment() {
+    const selectedTabId = useSelector((state) => state.tabs.present.selectedTabId);
+    
     const [items, setItems] = useState([]);
     const [selectedTab, setSelectedTab] = useState('History');
+    const [userId, setUserId] = useState(4);
 
     useEffect(() => {
         fetchData(selectedTab);
-    }, [selectedTab]);
+    }, [selectedTab, selectedTabId]);
 
-    const fetchData = (tab) => {
+    const fetchData = async (tab) => {
         if (tab === 'History') {
-            setItems(gettestHistoryData());
+            const items = await getHistoryData(userId, selectedTabId).data;
+            console.log(items);
+            // TODO: adapt FE with new data format
+            //setItems(items);
         } else {
-            setItems(getTestAllHistoryData());
+            const items = await getAllHistoryData(userId).data;
+            console.log(items);
+            // setItems(items);
         }
     };
 

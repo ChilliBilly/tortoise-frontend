@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSpring, animated } from 'react-spring';
 import { getLiveTabByUserId, getChatBoxSession, createTab, createTabGeneration } from '../../service/DataService';
 import { createNewTab, changeTab, initApp } from '../../redux/actions';
+import { doFetch } from './InputHistoryTabFragment';
 
 const ItemType = {
     TAB: 'tab',
@@ -116,14 +117,10 @@ function InputChatboxTabFragment() {
                         initialSessions = await getChatBoxSession(userId, tabs.data[0].id);
                         initialSessions = [{ text: initialSessions.data.text_entry_content }]
                     } catch (sessionError) {
-                        console.error("Error fetching chat box session:", sessionError);
-                        // Set default value for initialSessions if an error occurs
                         initialSessions = [{ text: '' }];
                     }
                 }
-                console.log(initialSessions)
                 dispatch(initApp(tabs, initialSessions));
-                console.log("init app finished");
             } catch (error) {
                 console.error("Error fetching tabs:", error);
                 dispatch(initApp([], [{ text: '' }])); // Use actual tabs if they were fetched
@@ -144,6 +141,7 @@ function InputChatboxTabFragment() {
         try {
             console.log("activated handleGenerateOuput")
             await createTabGeneration({ user_id: userId, tab_id: selectedTabId, text_entry_content: chatBoxSessionsByTab[selectedTabId][0].text })
+            doFetch();
         } catch (error) {
             console.error("Error creating tab generation:", error);
         }

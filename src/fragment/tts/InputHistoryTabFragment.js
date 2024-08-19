@@ -5,29 +5,65 @@ import { getHistoryData, getAllHistoryData } from '../../service/DataService';
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
+let fetchDataRef = null;
+
+export function doFetch() {
+    if (fetchDataRef) {
+        fetchDataRef(); // Call the ref function when doFetch is invoked
+    }
+}
 function InputHistoryTabFragment() {
     const selectedTabId = useSelector((state) => state.tabs.present.selectedTabId);
-    
+
     const [items, setItems] = useState([]);
     const [selectedTab, setSelectedTab] = useState('History');
-    const [userId, setUserId] = useState(4);
+    const [userId, setUserId] = useState(1);
+    const [fetchState, setFetchState] = useState(false);
 
     useEffect(() => {
         fetchData(selectedTab);
-    }, [selectedTab, selectedTabId]);
+    }, [selectedTab, selectedTabId, fetchState]);
+
+    fetchDataRef = () => {
+        setFetchState(prevState => !prevState); // Toggle fetchState
+    };
 
     const fetchData = async (tab) => {
-        if (tab === 'History') {
-            const items = await getHistoryData(userId, selectedTabId).data;
-            console.log(items);
-            // TODO: adapt FE with new data format
-            //setItems(items);
-        } else {
-            const items = await getAllHistoryData(userId).data;
-            console.log(items);
-            // setItems(items);
+        try {
+            let items;
+            if (tab === 'History') {
+                items = await getHistoryData(userId, selectedTabId);
+            } else {
+                items = await getAllHistoryData(userId);
+            }
+            console.log(items.data)
+            setItems(transformItemsData(items)); // Uncomment this when ready to set state
+        } catch (error) {
+            console.error(`Error fetching ${tab === 'History' ? 'history' : 'all history'}:`, error);
+            // Set a default fallback or handle it gracefully
+            setItems([]); // Uncomment and adjust this line if needed
         }
     };
+
+    function transformItemsData(items) {
+        return items.data.map((item) => {
+            // Format the "created_at" date to 'MM-DD-YYYY HH:mm'
+            const date = new Date(item.created_at);
+            const formattedDate = `${date.getMonth() + 1}-${date.getDate()}-${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+
+            // Extract the first 20 words from "text_entry_content"
+            const words = item.text_entry_content.split(' ');
+            const description = words.slice(0, 20).join(' ') + (words.length > 20 ? '...' : '');
+
+            return {
+                id: item.id, // ID of the tab generation
+                date: formattedDate, // Formatted date
+                description: description, // First 20 words of text_entry_content
+                duration: '0:45', // Static duration
+            };
+        });
+    }
+
 
     const handleTabClick = (tab) => {
         setSelectedTab(tab);

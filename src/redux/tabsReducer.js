@@ -37,7 +37,7 @@ const tabsReducer = produce((draft, action) => {
             draft.tabData.splice(action.payload.toIndex, 0, movedTab);
             break;
         case CREATE_NEW_TAB:
-            draft.tabData.push(action.payload.newTab);
+            draft.tabData.unshift(action.payload.newTab);
             draft.selectedTabId = action.payload.newTabId;
             draft.chatBoxSessionsByTab[action.payload.newTabId] = action.payload.initialSessions;
             break;
@@ -47,7 +47,7 @@ const tabsReducer = produce((draft, action) => {
             break;
         case INIT_APP:
             draft.tabData = Array.isArray(action.payload.tabs.data) ? action.payload.tabs.data : [];
-            draft.chatBoxSessionsByTab[0] = action.payload.initialSessions;
+            draft.chatBoxSessionsByTab[draft.tabData.length > 0 ? draft.tabData[0].id : 0] = action.payload.initialSessions;
             draft.selectedTabId = draft.tabData.length > 0 ? draft.tabData[0].id : null;
             break;
         // Add other cases as needed

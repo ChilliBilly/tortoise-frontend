@@ -9,8 +9,8 @@ import audioFile from '../../resources/audios/voice-4-long.wav';
 import { faUndoAlt, faRedoAlt, faAngleDown, faDownload, faPause, faPlay, faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSpring, animated } from 'react-spring';
-import { getLiveTabByUserId, getChatBoxSession, createTab, createTabGeneration } from '../../service/DataService';
-import { createNewTab, changeTab, initApp } from '../../redux/actions';
+import { getLiveTabByUserId, getChatBoxSession, createTab, createTabGeneration, getTabGenerationUserAndTabAndGenerationId } from '../../service/DataService';
+import { createNewTab, changeTab, selectGeneration, initApp } from '../../redux/actions';
 import { doFetch } from './InputHistoryTabFragment';
 
 const ItemType = {
@@ -76,6 +76,14 @@ function Tab({ item, index, moveTab, setSelectedTabId, selectedTabId, handleTabR
         </animated.div>
     );
 }
+// This will hold the reference to the function
+const selectGenerationRef = { current: null };
+
+export function doSelectGeneration(tab_id, tab_generation_id) {
+    if (selectGenerationRef.current) {
+        selectGenerationRef.current(tab_id, tab_generation_id);
+    }
+}
 
 function InputChatboxTabFragment() {
     const dispatch = useDispatch();
@@ -128,6 +136,24 @@ function InputChatboxTabFragment() {
         };
         fetchData();
     }, [dispatch]);
+
+    const handleSelectGeneration = async (tab_id, tab_generation_id) => {
+        console.log('Selected Generation:', tab_id, tab_generation_id);
+
+        try {
+            const item = await getTabGenerationUserAndTabAndGenerationId(userId, tab_id, tab_generation_id);
+            // Do something with the item, e.g., update state, dispatch an action, etc.
+            const tabId = item.data.tab_id
+            const sessions = [{ text: item.data.text_entry_content }]
+            dispatch(selectGeneration(tabId, sessions));
+        } catch (error) {
+            console.error('Error fetching item:', error);
+        }
+    };
+
+    useEffect(() => {
+        selectGenerationRef.current = handleSelectGeneration;
+    }, []);
 
     useEffect(() => {
         const currentSessions = Array.isArray(chatBoxSessionsByTab[selectedTabId]) ? chatBoxSessionsByTab[selectedTabId] : [];

@@ -4,6 +4,7 @@ import downloadButtonGray from '../../resources/images/download-gray.png'
 import { getHistoryData, getAllHistoryData } from '../../service/DataService';
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { doSelectGeneration } from './InputChatboxTabFragment';
 
 let fetchDataRef = null;
 
@@ -57,6 +58,7 @@ function InputHistoryTabFragment() {
 
             return {
                 id: item.id, // ID of the tab generation
+                tab_id: item.tab_id,
                 date: formattedDate, // Formatted date
                 description: description, // First 20 words of text_entry_content
                 duration: '0:45', // Static duration
@@ -68,6 +70,10 @@ function InputHistoryTabFragment() {
     const handleTabClick = (tab) => {
         setSelectedTab(tab);
     };
+
+    const handleGenerationClick = (item) => () => {
+        doSelectGeneration(item.tab_id, item.id)
+    }
 
     return (
         <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', paddingBottom: '30px' }}>
@@ -91,7 +97,7 @@ function InputHistoryTabFragment() {
                 {/* LIST */}
                 <div class="minimalist-scrollbar" style={{ margin: '0', padding: '0', width: '100%', height: '100%' }}>
                     {items.map(item => (
-                        <div key={item.id} style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
+                        <div key={item.id} style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none', cursor: 'pointer' }} onClick={handleGenerationClick(item)}>
                             <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>{item.date} {item.description}</p>
                             <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
                                 <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>{item.duration}</p>
@@ -100,264 +106,6 @@ function InputHistoryTabFragment() {
                             </div>
                         </div>
                     ))}
-
-                    {/* <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div>
-                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', width: '100%', height: '60px', alignItems: 'center', borderBottom: '1px solid #eeeeee', position: 'relative', userSelect: 'none' }}>
-                        <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', width: '100%', userSelect: 'none' }}>Item 1 Item2</p>
-                        <div style={{ margin: '0', padding: '0px 0px 0px 30px', display: 'flex', flexDirection: 'row', position: 'absolute', gap: '10px', right: '0', marginRight: '5px', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-                            <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', userSelect: 'none' }}>0:12</p>
-                            <img src={playButtonLightGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                            <img src={downloadButtonGray} style={{ width: '20px', height: '20px' }} alt="Description" />
-                        </div>
-                    </div> */}
-
                 </div>
             </div>
         </div>

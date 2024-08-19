@@ -1,6 +1,13 @@
 export const CREATE_NEW_TAB = 'CREATE_NEW_TAB';
 export const CHANGE_TAB = 'CHANGE_TAB';
 export const INIT_APP = 'INIT_APP';
+export const SELECT_GENERATION = "SELECT_GENERATION";
+
+
+export const initApp = (tabs, initialSessions) => ({
+    type: INIT_APP,
+    payload: { tabs, initialSessions },
+});
 
 export const createNewTab = (newTab, newTabId, initialSessions) => ({
     type: CREATE_NEW_TAB,
@@ -12,7 +19,7 @@ export const changeTab = (tabId, sessions) => ({
     payload: { tabId, sessions },
 });
 
-export const initApp = (tabs, initialSessions) => ({
-    type: INIT_APP,
-    payload: { tabs, initialSessions },
-});
+export const selectGeneration = (tabId, sessions) => ({
+    type: SELECT_GENERATION,
+    payload: {tabId, sessions}
+})

@@ -1,5 +1,5 @@
 import produce from 'immer';
-import { CREATE_NEW_TAB, CHANGE_TAB, INIT_APP } from './actions';
+import { CREATE_NEW_TAB, CHANGE_TAB, INIT_APP, SELECT_GENERATION } from './actions';
 const initialState = {
     tabData: [],
     selectedTabId: 0,
@@ -42,6 +42,7 @@ const tabsReducer = produce((draft, action) => {
             draft.chatBoxSessionsByTab[action.payload.newTabId] = action.payload.initialSessions;
             break;
         case CHANGE_TAB:
+        case SELECT_GENERATION:
             draft.selectedTabId = action.payload.tabId;
             draft.chatBoxSessionsByTab[action.payload.tabId] = action.payload.sessions;
             break;

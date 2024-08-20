@@ -1,5 +1,5 @@
 import produce from 'immer';
-import { CREATE_NEW_TAB, CHANGE_TAB, INIT_APP, SELECT_GENERATION } from './actions';
+import { CREATE_NEW_TAB, CHANGE_TAB, INIT_APP, SELECT_GENERATION, DELETE_TAB } from './actions';
 const initialState = {
     tabData: [],
     selectedTabId: 0,
@@ -19,7 +19,6 @@ const tabsReducer = produce((draft, action) => {
             draft.selectedTabId = action.payload;
             break;
         case 'SET_CHAT_BOX_SESSIONS':
-            console.log(action.payload.tadId)
             draft.chatBoxSessionsByTab[action.payload.tabId] = action.payload.sessions;
             break;
         case 'SET_IS_EDITING':
@@ -30,7 +29,7 @@ const tabsReducer = produce((draft, action) => {
             break;
         case 'UPDATE_TAB_NAME':
             const tab = draft.tabData.find(tab => tab.id === action.payload.id);
-            if (tab) tab.tabName = action.payload.newTabName;
+            if (tab) tab.tab_name = action.payload.newTabName;
             break;
         case 'MOVE_TAB':
             const [movedTab] = draft.tabData.splice(action.payload.fromIndex, 1);
@@ -45,6 +44,13 @@ const tabsReducer = produce((draft, action) => {
         case SELECT_GENERATION:
             draft.selectedTabId = action.payload.tabId;
             draft.chatBoxSessionsByTab[action.payload.tabId] = action.payload.sessions;
+            break;
+        case DELETE_TAB:
+            draft.tabData = draft.tabData.filter(tab => tab.id !== action.payload.tabId);
+            if (draft.selectedTabId === action.payload.tabId) {
+                draft.selectedTabId = draft.tabData.length > 0 ? draft.tabData[0].id : null;
+            }
+            delete draft.chatBoxSessionsByTab[action.payload.tabId];
             break;
         case INIT_APP:
             draft.tabData = Array.isArray(action.payload.tabs.data) ? action.payload.tabs.data : [];

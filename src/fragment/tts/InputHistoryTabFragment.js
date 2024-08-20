@@ -77,7 +77,7 @@ function InputHistoryTabFragment() {
 
     return (
         <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', paddingBottom: '30px' }}>
-            <div style={{ padding: '5px 0px', marginLeft: '30px', display: 'flex', flexDirection: 'row', gap: '40px', justifyContent: 'left', height: '30px', paddingRight: '30px' }}>
+            <div style={{ padding: '5px 0px', marginLeft: '30px', display: 'flex', flexDirection: 'row', gap: '40px', justifyContent: 'left', height: '50px', paddingRight: '30px', alignItems: 'center' }}>
                 <p
                     style={{ color: selectedTab === 'History' ? '#367AFF' : '#757575', fontSize: '14px', margin: '0', padding: '0', cursor: 'pointer', userSelect: 'none' }}
                     onClick={() => handleTabClick('History')}

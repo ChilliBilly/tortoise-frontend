@@ -9,15 +9,15 @@ import audioFile from '../../resources/audios/voice-4-long.wav';
 import { faUndoAlt, faRedoAlt, faAngleDown, faDownload, faPause, faPlay, faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSpring, animated } from 'react-spring';
-import { getLiveTabByUserId, getChatBoxSession, createTab, createTabGeneration, getTabGenerationUserAndTabAndGenerationId } from '../../service/DataService';
-import { createNewTab, changeTab, selectGeneration, initApp } from '../../redux/actions';
+import { getLiveTabByUserId, getChatBoxSession, createTab, createTabGeneration, getTabGenerationUserAndTabAndGenerationId, updateTabName, deleteTab } from '../../service/DataService';
+import { createNewTab, changeTab, selectGeneration, deleteExistingTab, initApp } from '../../redux/actions';
 import { doFetch } from './InputHistoryTabFragment';
 
 const ItemType = {
     TAB: 'tab',
 };
 
-function Tab({ item, index, moveTab, setSelectedTabId, selectedTabId, handleTabRightClick, isEditing, newTabName, handleTabNameChange, handleTabNameSave }) {
+function Tab({ item, index, moveTab, setSelectedTabId, selectedTabId, handleTabRightClick, isEditing, newTabName, handleTabNameChange, handleTabNameSave, handleTabDelete }) {
     const ref = useRef(null);
     const [{ isDragging }, drag] = useDrag({
         type: ItemType.TAB,
@@ -59,19 +59,27 @@ function Tab({ item, index, moveTab, setSelectedTabId, selectedTabId, handleTabR
                         }
                     }}
                     autoFocus
-                    style={{ fontSize: '14px' }}
+                    style={{ fontSize: '10px', width: '200px' }}
                 />
             ) : (
-                <p
-                    style={{ color: item.id === selectedTabId ? '#367AFF' : '#757575', fontSize: '14px', margin: '0', padding: '0', cursor: 'pointer', userSelect: 'none' }}
-                    onClick={() => {
-                        console.log(`Tab ${item.id} clicked`);
-                        setSelectedTabId(item.id);
-                    }}
-                    onContextMenu={(e) => handleTabRightClick(e, item.id, item.tab_name)}
-                >
-                    {item.tab_name}
-                </p>
+                <div style={{ margin: '0', padding: '0', gap: '10px', display: 'flex', flexDirection: 'row', alignItems: 'center', height: '100%' }}>
+                    <p
+                        style={{ color: item.id === selectedTabId ? '#367AFF' : '#757575', fontSize: '14px', margin: '0', padding: '0', cursor: 'pointer', userSelect: 'none' }}
+                        onClick={() => {
+                            setSelectedTabId(item.id);
+                        }}
+                        onContextMenu={(e) => handleTabRightClick(e, item.id, item.tab_name)}
+                    >
+                        {item.tab_name}
+                    </p>
+                    {selectedTabId === item.id && (
+                        <p
+                            style={{ color: '#AA4A44', fontSize: '14px', fontWeight: 'bold', margin: '0', padding: '0', cursor: 'pointer', userSelect: 'none', marginTop: '-5px' }}
+                            onClick={() => handleTabDelete(item.id)}>
+                            x
+                        </p>
+                    )}
+                </div>
             )}
         </animated.div>
     );
@@ -113,33 +121,32 @@ function InputChatboxTabFragment() {
     const maxCharCount = 5000;
 
     useEffect(() => {
-        const fetchData = async () => {
-            let initialSessions = [{ text: '' }]; // Default value for sessions
-
-            try {
-                // Fetch the live tabs by user ID
-                const tabs = await getLiveTabByUserId(userId);
-                // Attempt to fetch the initial chat box session if there are tabs available
-                if (tabs.data.length > 0) {
-                    try {
-                        initialSessions = await getChatBoxSession(userId, tabs.data[0].id);
-                        initialSessions = [{ text: initialSessions.data.text_entry_content }]
-                    } catch (sessionError) {
-                        initialSessions = [{ text: '' }];
-                    }
-                }
-                dispatch(initApp(tabs, initialSessions));
-            } catch (error) {
-                console.error("Error fetching tabs:", error);
-                dispatch(initApp([], [{ text: '' }])); // Use actual tabs if they were fetched
-            }
-        };
         fetchData();
     }, [dispatch]);
 
-    const handleSelectGeneration = async (tab_id, tab_generation_id) => {
-        console.log('Selected Generation:', tab_id, tab_generation_id);
+    const fetchData = async () => {
+        let initialSessions = [{ text: '' }]; // Default value for sessions
 
+        try {
+            // Fetch the live tabs by user ID
+            const tabs = await getLiveTabByUserId(userId);
+            // Attempt to fetch the initial chat box session if there are tabs available
+            if (tabs.data.length > 0) {
+                try {
+                    initialSessions = await getChatBoxSession(userId, tabs.data[0].id);
+                    initialSessions = [{ text: initialSessions.data.text_entry_content }]
+                } catch (sessionError) {
+                    initialSessions = [{ text: '' }];
+                }
+            }
+            dispatch(initApp(tabs, initialSessions));
+        } catch (error) {
+            console.error("Error fetching tabs:", error);
+            dispatch(initApp([], [{ text: '' }])); // Use actual tabs if they were fetched
+        }
+    };
+
+    const handleSelectGeneration = async (tab_id, tab_generation_id) => {
         try {
             const item = await getTabGenerationUserAndTabAndGenerationId(userId, tab_id, tab_generation_id);
             // Do something with the item, e.g., update state, dispatch an action, etc.
@@ -165,7 +172,6 @@ function InputChatboxTabFragment() {
 
     const handleGenerateOuput = async () => {
         try {
-            console.log("activated handleGenerateOuput")
             await createTabGeneration({ user_id: userId, tab_id: selectedTabId, text_entry_content: chatBoxSessionsByTab[selectedTabId][0].text })
             doFetch();
         } catch (error) {
@@ -261,12 +267,12 @@ function InputChatboxTabFragment() {
     const handleNewTab = async () => {
         try {
             const newTabId = tabData.length + 1;
-            const newTab = { id: newTabId, tab_name: `Tab ${newTabId}` };
-            await createTab({ user_id: userId, tab_name: newTab.tab_name });
+            const tab_name = `Tab ${newTabId}`;
+            const response = await createTab({ user_id: userId, tab_name: tab_name });
+            const newTab = { id: response.id, tab_name: tab_name };
             const initialSessions = [{ text: '' }];
-
             // Dispatch the action to create a new tab
-            dispatch(createNewTab(newTab, newTabId, initialSessions));
+            dispatch(createNewTab(newTab, response.id, initialSessions));
         } catch (error) {
             console.error("Error creating tab:", error);
         }
@@ -303,10 +309,24 @@ function InputChatboxTabFragment() {
         dispatch({ type: 'SET_NEW_TAB_NAME', payload: e.target.value });
     };
 
-    const handleTabNameSave = (id) => {
-        dispatch({ type: 'UPDATE_TAB_NAME', payload: { id, newTabName } });
-        dispatch({ type: 'SET_IS_EDITING', payload: null });
+    const handleTabNameSave = async (id) => {
+        try {
+            await updateTabName(userId, id, newTabName);
+            dispatch({ type: 'UPDATE_TAB_NAME', payload: { id, newTabName } });
+            dispatch({ type: 'SET_IS_EDITING', payload: null });
+        } catch (error) {
+            console.error("An error is occured: ", error);
+        }
     };
+
+    const handleTabDelete = async (id) => {
+        try {
+            await deleteTab(userId, id);
+            dispatch(deleteExistingTab(id));
+        } catch (error) {
+            console.error("An error is occured when trying to delete the tab: ", error);
+        }
+    }
 
     const moveTab = (fromIndex, toIndex) => {
         dispatch({ type: 'MOVE_TAB', payload: { fromIndex, toIndex } });
@@ -416,7 +436,7 @@ function InputChatboxTabFragment() {
     return (
         <DndProvider backend={HTML5Backend}>
             <div style={{ height: '100%', position: 'relative', width: '100%', display: 'flex', flexDirection: 'column', padding: '0', margin: '0', userSelect: 'none' }}>
-                <div style={{ margin: '0', padding: '0', position: 'relative', width: '100%', height: '30px', display: 'flex', flexDirection: 'row', overflow: 'hidden' }}>
+                <div style={{ margin: '0', padding: '0', position: 'relative', width: '100%', height: '50px', display: 'flex', flexDirection: 'row', overflow: 'hidden', alignItems: 'center' }}>
                     <div
                         ref={tabContainerRef}
                         onMouseDown={startScroll}
@@ -431,9 +451,10 @@ function InputChatboxTabFragment() {
                             flexDirection: 'row',
                             gap: '40px',
                             justifyContent: 'left',
-                            height: '30px',
+                            height: '50px',
                             maxWidth: 'calc(100% - 160px)',
-                            cursor: isMiddleMouseDown ? 'grab' : 'pointer'
+                            cursor: isMiddleMouseDown ? 'grab' : 'pointer',
+                            alignItems: 'center'
                         }}
                     >
                         {tabData.length > 0 && tabData.map((item, index) => (
@@ -449,6 +470,7 @@ function InputChatboxTabFragment() {
                                 newTabName={newTabName}
                                 handleTabNameChange={handleTabNameChange}
                                 handleTabNameSave={handleTabNameSave}
+                                handleTabDelete={handleTabDelete}
                             />
                         ))}
                     </div>

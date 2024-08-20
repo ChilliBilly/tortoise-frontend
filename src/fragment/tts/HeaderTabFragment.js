@@ -1,4 +1,4 @@
-function HeaderTabFragment({title, subtitle}) {
+function HeaderTabFragment({ title, subtitle }) {
     return (
         <div style={{ marginLeft: '60px', height: '130px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <p style={{ fontWeight: 'bold', fontSize: '28px', margin: '0', lineHeight: '40px' }}>{title}</p>

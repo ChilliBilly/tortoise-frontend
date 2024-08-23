@@ -261,6 +261,9 @@ function InputChatboxTabFragment() {
 
   const handleGenerateOuput = async () => {
     try {
+      if (chatBoxSessionsByTab[selectedTabId][0].text == "") {
+        throw new Error("Text cannot be null.");
+      }
       await createTabGeneration({
         user_id: userId,
         tab_id: selectedTabId,
@@ -580,6 +583,7 @@ function InputChatboxTabFragment() {
               maxWidth: "calc(100% - 160px)",
               cursor: isMiddleMouseDown ? "grab" : "pointer",
               alignItems: "center",
+              paddingRight: '100px'
             }}
           >
             <AnimatePresence>

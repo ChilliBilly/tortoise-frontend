@@ -13,7 +13,6 @@ const tabsReducer = produce((draft, action) => {
     switch (action.type) {
         case 'SET_TAB_DATA':
             draft.tabData = action.payload;
-            // draft.tabData = Array.isArray(action.payload) ? action.payload : [];
             break;
         case 'SET_SELECTED_TAB_ID':
             draft.selectedTabId = action.payload;

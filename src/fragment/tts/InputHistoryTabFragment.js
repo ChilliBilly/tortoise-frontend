@@ -1,12 +1,12 @@
-import "./InputHistoryTabFragment.css";
-import playButtonLightGray from "../../resources/images/playbutton-light-gray.png";
-import downloadButtonGray from "../../resources/images/download-gray.png";
-import { getHistoryData, getAllHistoryData } from "../../service/DataService";
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import './InputHistoryTabFragment.css';
+import playButtonLightGray from '../../resources/images/playbutton-light-gray.png'
+import downloadButtonGray from '../../resources/images/download-gray.png'
+import { getHistoryData, getAllHistoryData } from '../../service/DataService';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { doSelectGeneration, setAudioFile } from "./InputChatboxTabFragment";
+import { AnimatePresence, motion } from 'framer-motion';
 import testAudioFile from "../../resources/audios/voice-1.wav";
-
 let fetchDataRef = null;
 
 export function doFetch() {
@@ -20,9 +20,10 @@ function InputHistoryTabFragment() {
   );
 
   const [items, setItems] = useState([]);
-  const [selectedTab, setSelectedTab] = useState("History");
+  const [selectedTab, setSelectedTab] = useState('History');
   const [userId, setUserId] = useState(1);
   const [fetchState, setFetchState] = useState(false);
+  const [existingItems, setExistingItems] = useState(new Set());
 
   useEffect(() => {
     fetchData(selectedTab);
@@ -35,18 +36,17 @@ function InputHistoryTabFragment() {
   const fetchData = async (tab) => {
     try {
       let items;
-      if (tab === "History") {
+      if (tab === 'History') {
         items = await getHistoryData(userId, selectedTabId);
       } else {
         items = await getAllHistoryData(userId);
       }
-      console.log(items.data);
-      setItems(transformItemsData(items)); // Uncomment this when ready to set state
+      console.log(items.data)
+      const transformedItems = transformItemsData(items);
+      setItems(transformedItems);
+      setExistingItems(prevItems => new Set([...prevItems, ...transformedItems.map(item => item.id)]));
     } catch (error) {
-      console.error(
-        `Error fetching ${tab === "History" ? "history" : "all history"}:`,
-        error
-      );
+      console.error(`Error fetching ${tab === 'History' ? 'history' : 'all history'}:`, error);
       // Set a default fallback or handle it gracefully
       setItems([]); // Uncomment and adjust this line if needed
     }
@@ -56,12 +56,11 @@ function InputHistoryTabFragment() {
     return items.data.map((item) => {
       // Format the "created_at" date to 'MM-DD-YYYY HH:mm'
       const date = new Date(item.created_at);
-      const formattedDate = `${
-        date.getMonth() + 1
-      }-${date.getDate()}-${date.getFullYear()} ${date
-        .getHours()
-        .toString()
-        .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
+      const formattedDate = `${date.getMonth() + 1
+        }-${date.getDate()}-${date.getFullYear()} ${date
+          .getHours()
+          .toString()
+          .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
 
       // Extract the first 20 words from "text_entry_content"
       const words = item.text_entry_content.split(" ");
@@ -161,78 +160,89 @@ function InputHistoryTabFragment() {
           class="minimalist-scrollbar"
           style={{ margin: "0", padding: "0", width: "100%", height: "100%" }}
         >
-          {items.map((item) => (
-            <div
-              key={item.id}
-              style={{
-                margin: "0",
-                padding: "0",
-                display: "flex",
-                flexDirection: "row",
-                width: "100%",
-                height: "60px",
-                alignItems: "center",
-                borderBottom: "1px solid #eeeeee",
-                position: "relative",
-                userSelect: "none",
-                cursor: "pointer",
-              }}
-              onClick={handleGenerationClick(item)}
-            >
-              <p
-                style={{
-                  color: "#757575",
-                  fontSize: "14px",
-                  margin: "0",
-                  padding: "0",
-                  width: "100%",
-                  userSelect: "none",
-                }}
+          <AnimatePresence>
+            {items.map((item) => (
+              <motion.div
+                key={item.id}
+                onClick={handleGenerationClick(item)}
+                initial={{ opacity: 0, x: -50 }} // Initial state for new items
+                animate={{ opacity: 1, x: 0 }} // Animation state for new items
+                exit={{ opacity: 0, x: 50 }} // Exit state for removing items
+                layout
               >
-                {item.date} {item.description}
-              </p>
-              <div
-                style={{
-                  margin: "0",
-                  padding: "0px 0px 0px 30px",
-                  display: "flex",
-                  flexDirection: "row",
-                  position: "absolute",
-                  gap: "10px",
-                  right: "0",
-                  marginRight: "5px",
-                  backgroundColor: "rgba(255, 255, 255, 1)",
-                }}
-              >
-                <p
+                <div
+                  key={item.id}
                   style={{
-                    color: "#757575",
-                    fontSize: "14px",
                     margin: "0",
                     padding: "0",
+                    display: "flex",
+                    flexDirection: "row",
+                    width: "100%",
+                    height: "60px",
+                    alignItems: "center",
+                    borderBottom: "1px solid #eeeeee",
+                    position: "relative",
                     userSelect: "none",
+                    cursor: "pointer",
                   }}
+                  onClick={handleGenerationClick(item)}
                 >
-                  {item.duration}
-                </p>
-                <img
-                  src={playButtonLightGray}
-                  style={{ width: "20px", height: "20px" }}
-                  alt="Description"
-                  onClick={(e) => handlePlayAudio(e, item.audioLink)}
-                />
-                <img
-                  src={downloadButtonGray}
-                  style={{ width: "20px", height: "20px" }}
-                  alt="Description"
-                />
-              </div>
-            </div>
-          ))}
+                  <p
+                    style={{
+                      color: "#757575",
+                      fontSize: "14px",
+                      margin: "0",
+                      padding: "0",
+                      width: "100%",
+                      userSelect: "none",
+                    }}
+                  >
+                    {item.date} {item.description}
+                  </p>
+                  <div
+                    style={{
+                      margin: "0",
+                      padding: "0px 0px 0px 30px",
+                      display: "flex",
+                      flexDirection: "row",
+                      position: "absolute",
+                      gap: "10px",
+                      right: "0",
+                      marginRight: "5px",
+                      backgroundColor: "rgba(255, 255, 255, 1)",
+                    }}
+                  >
+                    <p
+                      style={{
+                        color: "#757575",
+                        fontSize: "14px",
+                        margin: "0",
+                        padding: "0",
+                        userSelect: "none",
+                      }}
+                    >
+                      {item.duration}
+                    </p>
+                    <img
+                      src={playButtonLightGray}
+                      style={{ width: "20px", height: "20px" }}
+                      alt="Description"
+                      onClick={(e) => handlePlayAudio(e, item.audioLink)}
+                    />
+                    <img
+                      src={downloadButtonGray}
+                      style={{ width: "20px", height: "20px" }}
+                      alt="Description"
+                    />
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 export default InputHistoryTabFragment;

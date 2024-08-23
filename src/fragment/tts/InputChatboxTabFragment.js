@@ -35,6 +35,7 @@ import {
   initApp,
 } from "../../redux/actions";
 import { doFetch } from "./InputHistoryTabFragment";
+import { AnimatePresence, motion } from 'framer-motion';
 
 const ItemType = {
   TAB: "tab",
@@ -94,7 +95,7 @@ function Tab({
             }
           }}
           autoFocus
-          style={{ fontSize: "10px", width: "200px" }}
+          style={{ fontSize: '10px', width: '100px' }}
         />
       ) : (
         <div
@@ -527,9 +528,10 @@ function InputChatboxTabFragment() {
     };
   }, [isScrolling]);
 
-  // if (!tabData.length) return <div>Loading...</div>;
-
-  const currentSessions = chatBoxSessionsByTab[selectedTabId] || [];
+  let currentSessions = chatBoxSessionsByTab[selectedTabId] || [];
+  if (currentSessions.length === 0 && tabData.length !== 0) {
+    currentSessions = [{ text: '' }]
+  }
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -556,8 +558,10 @@ function InputChatboxTabFragment() {
             flexDirection: "row",
             overflow: "hidden",
             alignItems: "center",
+            paddingRight: '100px'
           }}
         >
+
           <div
             ref={tabContainerRef}
             onMouseDown={startScroll}
@@ -578,23 +582,33 @@ function InputChatboxTabFragment() {
               alignItems: "center",
             }}
           >
-            {tabData.length > 0 &&
-              tabData.map((item, index) => (
-                <Tab
-                  key={item.id}
-                  item={item}
-                  index={index}
-                  moveTab={moveTab}
-                  setSelectedTabId={handleTabChange}
-                  selectedTabId={selectedTabId}
-                  handleTabRightClick={handleTabRightClick}
-                  isEditing={isEditing}
-                  newTabName={newTabName}
-                  handleTabNameChange={handleTabNameChange}
-                  handleTabNameSave={handleTabNameSave}
-                  handleTabDelete={handleTabDelete}
-                />
-              ))}
+            <AnimatePresence>
+              {tabData.length > 0 &&
+                tabData.map((item, index) => (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, y: -20 }} // Animation starts with tab slightly above and invisible
+                    animate={{ opacity: 1, y: 0 }}   // Ends with tab in place and fully visible
+                    exit={{ opacity: 0, y: -20 }}
+                    layout
+                  >
+                    <Tab
+                      key={item.id}
+                      item={item}
+                      index={index}
+                      moveTab={moveTab}
+                      setSelectedTabId={handleTabChange}
+                      selectedTabId={selectedTabId}
+                      handleTabRightClick={handleTabRightClick}
+                      isEditing={isEditing}
+                      newTabName={newTabName}
+                      handleTabNameChange={handleTabNameChange}
+                      handleTabNameSave={handleTabNameSave}
+                      handleTabDelete={handleTabDelete}
+                    />
+                  </motion.div>
+                ))}
+            </AnimatePresence>
           </div>
           <div
             style={{
@@ -611,30 +625,35 @@ function InputChatboxTabFragment() {
               alignItems: "center",
             }}
           >
-            <p
-              style={{
-                color: "#757575",
-                fontSize: "14px",
-                margin: "0",
-                fontWeight: "bold",
-                padding: "0",
-                cursor: "pointer",
-                userSelect: "none",
-              }}
-              onClick={handleNewTab}
+            <motion.div
+              whileTap={{ scale: 1.2 }} // Scale animation on click
+              style={{ margin: '0', padding: '0', width: '30px', position: 'absolute', right: '40px', display: 'flex', flexDirection: 'row', gap: '10px', padding: '5px 0px', justifyContent: 'center', alignItems: 'center' }}
             >
-              +
-            </p>
-            <FontAwesomeIcon
-              icon={faAngleLeft}
-              onClick={scrollLeftButton}
-              style={{ cursor: "pointer", width: "8px" }}
-            />
-            <FontAwesomeIcon
-              icon={faAngleRight}
-              onClick={scrollRightButton}
-              style={{ cursor: "pointer", width: "8px" }}
-            />
+              <p
+                style={{
+                  color: "#757575",
+                  fontSize: "14px",
+                  margin: "0",
+                  fontWeight: "bold",
+                  padding: "0",
+                  cursor: "pointer",
+                  userSelect: "none",
+                }}
+                onClick={handleNewTab}
+              >
+                +
+              </p>
+              <FontAwesomeIcon
+                icon={faAngleLeft}
+                onClick={scrollLeftButton}
+                style={{ cursor: "pointer", width: "8px" }}
+              />
+              <FontAwesomeIcon
+                icon={faAngleRight}
+                onClick={scrollRightButton}
+                style={{ cursor: "pointer", width: "8px" }}
+              />
+            </motion.div>
           </div>
         </div>
         <div
@@ -648,279 +667,115 @@ function InputChatboxTabFragment() {
           }}
         >
           {Array.isArray(currentSessions) && currentSessions.length > 0 ? (
-            currentSessions.map((item, index) => (
-              <textarea
-                key={index}
-                placeholder="Enter your text here..."
-                className="minimalist-scrollbar"
-                style={{
-                  margin: "0",
-                  padding: "0",
-                  width: "100%",
-                  height: "calc(100% - 140px)",
-                  paddingLeft: "60px",
-                  borderWidth: "0",
-                  fontSize: "20px",
-                  outline: "none",
-                  paddingBottom: "60px",
-                  backgroundColor: "white", // Ensure background is white to prevent overlap
-                  zIndex: 1,
-                  userSelect: "none", // Ensure it's on top of other elements
-                }}
-                value={item.text} // Use value to ensure textarea reflects state changes
-                onChange={(e) => handleTextChange(index, e.target.value)}
-              />
-            ))
+            <AnimatePresence>
+              {currentSessions.map((item, index) => (
+                <motion.div
+                  key={index}
+                  animate={{ opacity: 1 }}
+                  initial={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <textarea
+                    key={index}
+                    placeholder="Enter your text here..."
+                    className="minimalist-scrollbar"
+                    style={{
+                      margin: "0",
+                      padding: "0",
+                      width: "100%",
+                      height: "calc(100% - 140px)",
+                      paddingLeft: "60px",
+                      borderWidth: "0",
+                      fontSize: "20px",
+                      outline: "none",
+                      paddingBottom: "60px",
+                      backgroundColor: "white", // Ensure background is white to prevent overlap
+                      zIndex: 1,
+                      userSelect: "none", // Ensure it's on top of other elements
+                    }}
+                    value={item.text} // Use value to ensure textarea reflects state changes
+                    onChange={(e) => handleTextChange(index, e.target.value)}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
           ) : (
             <p>No sessions available</p> // You can replace this with any fallback UI you'd like
           )}
         </div>
 
-        <div
-          style={{
-            padding: "0",
-            margin: "0",
-            paddingLeft: "60px",
-            paddingRight: "30px",
-            display: "flex",
-            flexDirection: "column",
-            width: "100%",
-            position: "absolute",
-            bottom: "0",
-            height: "150px",
-            justifyContent: "end",
-            gap: "20px",
-            backdropFilter: "blur(10px)",
-            backgroundColor: "rgba(255, 255, 255, 0.5)",
-          }}
-        >
-          <div
-            style={{
-              width: "100%",
-              padding: "0",
-              margin: "0",
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-          >
-            <div
-              style={{
-                padding: "0",
-                margin: "0",
-                display: "flex",
-                flexDirection: "row",
-                gap: "20px",
-                justifyContent: "flex-end",
-                alignItems: "flex-end",
-              }}
-            >
-              <img
-                src={image}
-                style={{ width: "20px", height: "20px" }}
-                alt="Description"
-              />
-              <p
-                style={{
-                  lineHeight: "20px",
-                  margin: "0px",
-                  fontWeight: "bold",
-                }}
-              >
-                HN - Ngọc Huyền
-              </p>
+        <div style={{ padding: '0', margin: '0', paddingLeft: '60px', paddingRight: '30px', display: 'flex', flexDirection: 'column', width: '100%', position: 'absolute', bottom: '0', height: '150px', justifyContent: 'end', gap: '20px', backdropFilter: 'blur(10px)', backgroundColor: 'rgba(255, 255, 255, 0.5)' }}>
+          <div style={{ width: '100%', padding: '0', margin: '0', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+            <div style={{ padding: '0', margin: '0', display: 'flex', flexDirection: 'row', gap: '20px', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+              <img src={image} style={{ width: '20px', height: '20px' }} alt="Description" />
+              <p style={{ lineHeight: '20px', margin: '0px', fontWeight: 'bold' }}>HN - Ngọc Huyền</p>
             </div>
-            <div
-              style={{
-                padding: "0",
-                margin: "0",
-                display: "flex",
-                flexDirection: "row",
-                gap: "50px",
-                justifyContent: "flex-end",
-                alignItems: "flex-end",
-              }}
-            >
-              <div
-                style={{
-                  padding: "0",
-                  margin: "0",
-                  display: "flex",
-                  flexDirection: "row",
-                  gap: "0px",
-                  justifyContent: "flex-end",
-                  alignItems: "flex-end",
-                }}
-              >
-                <p
-                  className={isLimitReached ? "char-count-limit" : ""}
-                  style={{
-                    color: "#757575",
-                    fontSize: "14px",
-                    margin: "0",
-                    padding: "0",
-                  }}
-                >
-                  {charCount}
-                </p>
-                <p
-                  style={{
-                    color: "#757575",
-                    fontSize: "14px",
-                    margin: "0",
-                    padding: "0",
-                  }}
-                >
-                  /{maxCharCount}
-                </p>
+            <div style={{ padding: '0', margin: '0', display: 'flex', flexDirection: 'row', gap: '50px', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+              <div style={{ padding: '0', margin: '0', display: 'flex', flexDirection: 'row', gap: '0px', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+                <p className={isLimitReached ? 'char-count-limit' : ''} style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0' }}>{charCount}</p>
+                <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0' }}>/{maxCharCount}</p>
               </div>
-              <p
-                style={{
-                  color: "#367AFF",
-                  fontSize: "14px",
-                  margin: "0",
-                  padding: "0",
-                  cursor: "pointer",
-                }}
-                onClick={handleGenerateOuput}
+              <motion.div
+                whileTap={{ scale: 1.2 }} // Scale animation on click
               >
-                Generate Speech
-              </p>
+                <p style={{ color: '#367AFF', fontSize: '14px', margin: '0', padding: '0', cursor: 'pointer' }} onClick={handleGenerateOuput}>Generate Speech</p>
+              </motion.div>
             </div>
           </div>
-          <div
-            style={{
-              width: "100%",
-              padding: "0",
-              margin: "0",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-              justifyContent: "end",
-              height: "50px",
-              marginBottom: "30px",
-            }}
-          >
-            <div
-              style={{
-                width: "100%",
-                padding: "0",
-                margin: "0",
-                display: "flex",
-                flexDirection: "row",
-                gap: "20px",
-                alignItems: "end",
-              }}
-            >
-              <FontAwesomeIcon
-                icon={isPlaying ? faPause : faPlay}
-                onClick={handlePlayPause}
-                style={{
-                  margin: "0",
-                  padding: "0",
-                  fontSize: "28px",
-                  width: "22px",
-                }}
-              ></FontAwesomeIcon>
-              <div
-                style={{
-                  width: "100%",
-                  padding: "0",
-                  margin: "0",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "10px",
-                }}
-              >
-                <p
-                  style={{
-                    color: "#757575",
-                    fontSize: "14px",
-                    margin: "0",
-                    padding: "0",
-                    fontWeight: "bold",
-                  }}
-                >
-                  premade/Alice, 6/23/24, 01:18
-                </p>
-                <div
-                  style={{
-                    display: "flex",
-                    width: "100%",
-                    justifyContent: "space-between",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    position: "r",
-                  }}
-                >
-                  <FontAwesomeIcon
-                    icon={faUndoAlt}
-                    onClick={() => handleSkip(-5)}
-                    style={{ cursor: "pointer" }}
-                  ></FontAwesomeIcon>
-                  <FontAwesomeIcon
-                    icon={faRedoAlt}
-                    onClick={() => handleSkip(5)}
-                    style={{ cursor: "pointer" }}
-                  ></FontAwesomeIcon>
+          <div style={{ width: '100%', padding: '0', margin: '0', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', justifyContent: 'end', height: '50px', marginBottom: '30px' }}>
+            <div style={{ width: '100%', padding: '0', margin: '0', display: 'flex', flexDirection: 'row', gap: '20px', alignItems: "end" }}>
+              <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} onClick={handlePlayPause} style={{ margin: '0', padding: '0', fontSize: '28px', width: '22px' }}></FontAwesomeIcon>
+              <div style={{ width: '100%', padding: '0', margin: '0', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', fontWeight: 'bold' }}>premade/Alice, 6/23/24, 01:18</p>
+                <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', position: 'r' }}>
+                  <FontAwesomeIcon icon={faUndoAlt} onClick={() => handleSkip(-5)} style={{ cursor: 'pointer' }}></FontAwesomeIcon>
+                  <FontAwesomeIcon icon={faRedoAlt} onClick={() => handleSkip(5)} style={{ cursor: 'pointer' }}></FontAwesomeIcon>
                   <div
                     ref={progressBarRef}
                     style={{
-                      margin: "0",
-                      padding: "0",
-                      width: "calc(100% - 250px)",
-                      backgroundColor: "#eeeeee",
-                      height: "9px",
-                      borderRadius: "9px",
-                      position: "relative",
-                      cursor: "pointer",
+                      margin: '0',
+                      padding: '0',
+                      width: 'calc(100% - 250px)',
+                      backgroundColor: '#eeeeee',
+                      height: '9px',
+                      borderRadius: '9px',
+                      position: 'relative',
+                      cursor: 'pointer'
                     }}
                     onMouseDown={handleMouseDown}
                   >
                     <div
                       style={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "0",
-                        transform: "translateY(-50%)",
-                        height: "9px",
-                        borderRadius: "9px",
+                        position: 'absolute',
+                        top: '50%',
+                        left: '0',
+                        transform: 'translateY(-50%)',
+                        height: '9px',
+                        borderRadius: '9px',
                         width: `${(currentTime / duration) * 100}%`,
-                        backgroundColor: "#367AFF",
-                        zIndex: 1,
+                        backgroundColor: '#367AFF',
+                        zIndex: 1
                       }}
                     ></div>
                     <div
                       style={{
-                        position: "absolute",
-                        top: "50%",
+                        position: 'absolute',
+                        top: '50%',
                         left: `${(currentTime / duration) * 100}%`,
-                        transform: "translate(-50%, -50%)",
-                        width: "5px",
-                        height: "15px",
-                        backgroundColor: "#555555",
-                        borderRadius: "5px",
-                        cursor: "pointer",
-                        zIndex: 2,
+                        transform: 'translate(-50%, -50%)',
+                        width: '5px',
+                        height: '15px',
+                        backgroundColor: '#555555',
+                        borderRadius: '5px',
+                        cursor: 'pointer',
+                        zIndex: 2
                       }}
                     ></div>
                   </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: "10px",
-                    }}
-                  >
-                    <p style={{ margin: "0", padding: "0" }}>
-                      {new Date(currentTime * 1000).toISOString().substr(11, 8)}
-                    </p>
-                    <p style={{ margin: "0", padding: "0" }}>/</p>
-                    <p style={{ margin: "0", padding: "0" }}>
-                      {new Date(duration * 1000).toISOString().substr(11, 8)}
-                    </p>
+                  <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                    <p style={{ margin: '0', padding: '0' }}>{new Date(currentTime * 1000).toISOString().substr(11, 8)}</p>
+                    <p style={{ margin: '0', padding: '0' }}>/</p>
+                    <p style={{ margin: '0', padding: '0' }}>{new Date(duration * 1000).toISOString().substr(11, 8)}</p>
                   </div>
                   <FontAwesomeIcon icon={faDownload}></FontAwesomeIcon>
                   <FontAwesomeIcon icon={faAngleDown}></FontAwesomeIcon>
@@ -936,7 +791,7 @@ function InputChatboxTabFragment() {
           onLoadedMetadata={handleLoadedMetadata}
           onEnded={handleAudioEnd}
         />
-      </div>
+      </div >
     </DndProvider>
   );
 }

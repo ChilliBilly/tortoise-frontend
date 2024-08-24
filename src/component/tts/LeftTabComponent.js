@@ -1,6 +1,6 @@
 import LeftTabFragment from "../../fragment/tts/LeftTabFragment";
 
-function LeftTabComponent() {
+function LeftTabComponent({ onToggle }) {
     const handleLogout = () => {
         // Clear user session and redirect to login
         localStorage.removeItem('token');

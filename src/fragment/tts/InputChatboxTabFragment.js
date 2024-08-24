@@ -17,6 +17,7 @@ import {
   faAngleRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import { useSpring, animated } from "react-spring";
 import {
   getLiveTabByUserId,
@@ -26,6 +27,8 @@ import {
   getTabGenerationUserAndTabAndGenerationId,
   updateTabName,
   deleteTab,
+  getVoiceList,
+  AUDIO_API_URL
 } from "../../service/DataService";
 import {
   createNewTab,
@@ -166,6 +169,16 @@ export function setAudioFile(newAudioSrc) {
   }
 }
 
+const dropdownVariants = {
+  hidden: { opacity: 0, y: -10 },
+  visible: { opacity: 1, y: 0 },
+};
+
+const arrowVariants = {
+  hidden: { opacity: 0, y: 10 }, // Start position (to the left)
+  visible: { opacity: 1, y: 0 },   // End position (centered)
+};
+
 function InputChatboxTabFragment() {
   const dispatch = useDispatch();
   const tabData = useSelector((state) => state.tabs.present.tabData);
@@ -196,6 +209,11 @@ function InputChatboxTabFragment() {
   const [charCount, setCharCount] = useState(0);
   const [isLimitReached, setIsLimitReached] = useState(false);
   const [isMiddleMouseDown, setIsMiddleMouseDown] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedVoice, setSelectedVoice] = useState(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const voices = getVoiceList();
+
   const maxCharCount = 5000;
 
   useEffect(() => {
@@ -203,8 +221,30 @@ function InputChatboxTabFragment() {
   }, [dispatch]);
 
   changeAudioSrc = (newAudioSrc) => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      clearInterval(intervalRef.current);
+    }
     setAudioSrc(newAudioSrc);
-    handlePlayPause();
+    setIsPlaying(false); // Ensure playback is stopped
+
+    // Use `audioRef.current` to handle playback after updating the source
+    if (audioRef.current) {
+      audioRef.current.pause(); // Stop the audio playback
+      audioRef.current.src = newAudioSrc; // Change the audio source
+      audioRef.current.load(); // Load the new audio source
+    }
+  };
+
+  const handleToggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const handleSelectVoice = (voice) => {
+    setSelectedVoice(voice);
+    console.log('Selected Voice ID:', selectedVoice?.id);
+    console.log('Current Voice ID:', voice.id);
+    setIsOpen(false);
   };
 
   const fetchData = async () => {
@@ -264,11 +304,14 @@ function InputChatboxTabFragment() {
       if (chatBoxSessionsByTab[selectedTabId][0].text == "") {
         throw new Error("Text cannot be null.");
       }
-      await createTabGeneration({
+      const tab_generation = await createTabGeneration({
         user_id: userId,
         tab_id: selectedTabId,
         text_entry_content: chatBoxSessionsByTab[selectedTabId][0].text,
       });
+      if (tab_generation.audio_name) {
+        setAudioFile(`${AUDIO_API_URL}/user/${userId}/${tab_generation.audio_name}`);
+      }
       doFetch();
     } catch (error) {
       console.error("Error creating tab generation:", error);
@@ -543,6 +586,7 @@ function InputChatboxTabFragment() {
           height: "100%",
           position: "relative",
           width: "100%",
+          maxWidth: '1165px',
           display: "flex",
           flexDirection: "column",
           padding: "0",
@@ -631,7 +675,17 @@ function InputChatboxTabFragment() {
           >
             <motion.div
               whileTap={{ scale: 1.2 }} // Scale animation on click
-              style={{ margin: '0', padding: '0', width: '30px', position: 'absolute', right: '40px', display: 'flex', flexDirection: 'row', gap: '10px', padding: '5px 0px', justifyContent: 'center', alignItems: 'center' }}
+              style={{
+                margin: '0',
+                padding: '0',
+                width: '30px',
+                position: 'absolute',
+                display: 'flex',
+                flexDirection: 'row',
+                gap: '10px',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
             >
               <p
                 style={{
@@ -650,12 +704,12 @@ function InputChatboxTabFragment() {
               <FontAwesomeIcon
                 icon={faAngleLeft}
                 onClick={scrollLeftButton}
-                style={{ cursor: "pointer", width: "8px" }}
+                style={{ cursor: "pointer", width: "8px", margin: "0", padding: "0" }}
               />
               <FontAwesomeIcon
                 icon={faAngleRight}
                 onClick={scrollRightButton}
-                style={{ cursor: "pointer", width: "8px" }}
+                style={{ cursor: "pointer", width: "8px", margin: "0", padding: "0" }}
               />
             </motion.div>
           </div>
@@ -668,6 +722,7 @@ function InputChatboxTabFragment() {
             padding: "0",
             paddingTop: "10px",
             paddingRight: "30px",
+            zIndex: 1 // Lower stack level
           }}
         >
           {Array.isArray(currentSessions) && currentSessions.length > 0 ? (
@@ -678,6 +733,12 @@ function InputChatboxTabFragment() {
                   animate={{ opacity: 1 }}
                   initial={{ opacity: 0 }}
                   transition={{ duration: 0.5 }}
+                  style={{
+                    width: "100%",
+                    height: "100%", // Ensure the height is set to 100% of the parent container
+                    display: "flex", // Use flexbox to ensure proper sizing
+                    alignItems: "flex-start", // Align items to the start
+                  }}
                 >
                   <textarea
                     key={index}
@@ -687,48 +748,204 @@ function InputChatboxTabFragment() {
                       margin: "0",
                       padding: "0",
                       width: "100%",
-                      height: "calc(100% - 140px)",
+                      height: "calc(100% - 150px)",
                       paddingLeft: "60px",
                       borderWidth: "0",
                       fontSize: "20px",
                       outline: "none",
                       paddingBottom: "60px",
-                      backgroundColor: "white", // Ensure background is white to prevent overlap
+                      backgroundColor: "white",
                       zIndex: 1,
-                      userSelect: "none", // Ensure it's on top of other elements
+                      userSelect: "none",
                     }}
-                    value={item.text} // Use value to ensure textarea reflects state changes
+                    value={item.text}
                     onChange={(e) => handleTextChange(index, e.target.value)}
                   />
                 </motion.div>
               ))}
             </AnimatePresence>
           ) : (
-            <p>No sessions available</p> // You can replace this with any fallback UI you'd like
+            <div
+              style={{
+                textAlign: "center",
+                padding: "20px",
+                color: "#555",
+                fontStyle: "italic",
+                fontSize: "18px",
+                backgroundColor: "#f0f0f0",
+                borderRadius: "8px",
+                marginLeft: "60px",
+              }}
+            >
+              <p>No sessions available at the moment.</p>
+              <p>Why not start a new one?</p>
+
+              <motion.button
+                onClick={handleNewTab}
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0px 10px 20px rgba(0, 123, 255, 0.4)",
+                  background: "linear-gradient(90deg, #00b4db, #0083b0)", // gradient on hover
+                }}
+                whileTap={{ scale: 0.95 }}
+                style={{
+                  marginTop: "20px",
+                  padding: "12px 24px",
+                  fontSize: "16px",
+                  color: "white",
+                  background: "linear-gradient(90deg, #007bff, #00b4db)", // initial gradient
+                  border: "none",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  outline: "none",
+                  transition: "background 0.5s ease, box-shadow 0.3s ease",
+                }}
+              >
+                Start a New Session
+              </motion.button>
+            </div>
           )}
         </div>
 
-        <div style={{ padding: '0', margin: '0', paddingLeft: '60px', paddingRight: '30px', display: 'flex', flexDirection: 'column', width: '100%', position: 'absolute', bottom: '0', height: '150px', justifyContent: 'end', gap: '20px', backdropFilter: 'blur(10px)', backgroundColor: 'rgba(255, 255, 255, 0.5)' }}>
+        <div style={{ padding: '0', margin: '0', paddingLeft: '60px', paddingRight: '30px', display: 'flex', flexDirection: 'column', width: '100%', position: 'absolute', bottom: '0', height: '160px', justifyContent: 'end', gap: '20px', backdropFilter: 'blur(10px)', backgroundColor: 'rgba(255, 255, 255, 0.5)', zIndex: 2 }}>
           <div style={{ width: '100%', padding: '0', margin: '0', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-            <div style={{ padding: '0', margin: '0', display: 'flex', flexDirection: 'row', gap: '20px', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
-              <img src={image} style={{ width: '20px', height: '20px' }} alt="Description" />
-              <p style={{ lineHeight: '20px', margin: '0px', fontWeight: 'bold' }}>HN - Ngọc Huyền</p>
+            <div
+              style={{ position: 'relative', display: 'inline-block' }}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+            >
+              <div
+                onClick={handleToggleDropdown}
+                style={{
+                  paddingRight: '10px',
+                  fontSize: '16px',
+                  cursor: 'pointer',
+                  borderRadius: '4px',
+                  backgroundColor: '#fff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                }}
+              >
+                <motion.div
+                  initial="hidden"
+                  animate={isHovered || isOpen ? "visible" : "hidden"}
+                  variants={arrowVariants}
+                  transition={{ duration: 0.3 }}
+                  style={{ display: 'flex', alignItems: 'center' }}
+                >
+                  <FontAwesomeIcon
+                    icon={faChevronUp}
+                    style={{ fontSize: '16px', marginLeft: '10px' }}
+                  />
+                </motion.div>
+                <img
+                  src={image} // Replace with actual image if available
+                  alt="Voice"
+                  style={{ width: '20px', height: '20px' }}
+                />
+                <p style={{ margin: '0', fontWeight: 'bold' }}>
+                  {selectedVoice ? selectedVoice.voice_name : 'Select Voice'}
+                </p>
+              </div>
+              <AnimatePresence>
+                {isOpen && (
+                  <motion.div
+                    initial="hidden"
+                    animate="visible"
+                    exit="hidden"
+                    variants={dropdownVariants}
+                    style={{
+                      position: 'absolute',
+                      bottom: '100%', // Position above the main item
+                      left: '18px', // Align with the main item
+                      backgroundColor: '#fff',
+                      borderRadius: '20px',
+                      border: '1px solid #ddd',
+                      boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                      padding: '5px',
+                      zIndex: 1000,
+                      width: '100%',
+                    }}
+                  >
+                    {voices.map((voice) => (
+                      <div
+                        key={voice.id}
+                        onClick={() => handleSelectVoice(voice)}
+                        style={{
+                          padding: '10px',
+                          cursor: 'pointer',
+                          borderRadius: '20px',
+                          border: selectedVoice?.id === voice.id ? "1px solid #eeeeee" : "1px solid #fff"
+                        }}
+                      >
+                        <img
+                          src={image} // Replace with actual image if available
+                          alt="Voice"
+                          style={{ width: '20px', height: '20px', marginRight: '10px' }}
+                        />
+                        {voice.voice_name}
+                      </div>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
             <div style={{ padding: '0', margin: '0', display: 'flex', flexDirection: 'row', gap: '50px', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
-              <div style={{ padding: '0', margin: '0', display: 'flex', flexDirection: 'row', gap: '0px', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+              <div style={{ padding: '0', margin: '0', display: 'flex', flexDirection: 'row', gap: '0px', justifyContent: 'flex-end', alignItems: 'center', height: '100%' }}>
                 <p className={isLimitReached ? 'char-count-limit' : ''} style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0' }}>{charCount}</p>
                 <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0' }}>/{maxCharCount}</p>
               </div>
               <motion.div
-                whileTap={{ scale: 1.2 }} // Scale animation on click
+                whileTap={{ scale: 1.2 }} // Scale up on click
+                whileHover={{
+                  scale: 1.1, // Slightly scale up on hover
+                  boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.2)' // Shadow effect on hover
+                }}
+                style={{
+                  display: 'inline-block',
+                  background: 'linear-gradient(270deg, #367AFF, #00b4db, #367AFF)',
+                  backgroundSize: '200% 200%',
+                  animation: 'gradientShift 8s ease infinite', // Gradient shift animation
+                  borderRadius: '20px', // Border radius to match the inner p element
+                }}
               >
-                <p style={{ color: '#367AFF', fontSize: '14px', margin: '0', padding: '0', cursor: 'pointer' }} onClick={handleGenerateOuput}>Generate Speech</p>
+                <p
+                  style={{
+                    fontSize: '14px',
+                    margin: '0',
+                    padding: '8px 12px',
+                    cursor: 'pointer',
+                    border: 'none', // Remove solid border to enhance gradient look
+                    borderRadius: '20px',
+                    display: 'inline-block',
+                    userSelect: 'none',
+                    color: '#fff',
+                    background: 'inherit', // Use parent background
+                    backgroundSize: '200% 200%',
+                    textAlign: 'center',
+                    transition: 'background 0.3s ease, box-shadow 0.3s ease' // Smooth transition for background and shadow
+                  }}
+                  onClick={handleGenerateOuput}
+                >
+                  Generate Speech
+                </p>
+
+                <style>{
+                  `
+                    @keyframes gradientShift {
+                      0% { background-position: 0% 50%; }
+                      50% { background-position: 100% 50%; }
+                      100% { background-position: 0% 50%; }
+                    }
+                  `
+                }</style>
               </motion.div>
             </div>
           </div>
           <div style={{ width: '100%', padding: '0', margin: '0', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', justifyContent: 'end', height: '50px', marginBottom: '30px' }}>
             <div style={{ width: '100%', padding: '0', margin: '0', display: 'flex', flexDirection: 'row', gap: '20px', alignItems: "end" }}>
-              <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} onClick={handlePlayPause} style={{ margin: '0', padding: '0', fontSize: '28px', width: '22px' }}></FontAwesomeIcon>
+              <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} onClick={handlePlayPause} style={{ margin: '0', padding: '0', fontSize: '28px', width: '22px', cursor: 'pointer' }}></FontAwesomeIcon>
               <div style={{ width: '100%', padding: '0', margin: '0', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', fontWeight: 'bold' }}>premade/Alice, 6/23/24, 01:18</p>
                 <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', position: 'r' }}>

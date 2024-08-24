@@ -56,24 +56,24 @@ function InputHistoryTabFragment() {
     return items.data.map((item) => {
       // Format the "created_at" date to 'MM-DD-YYYY HH:mm'
       const date = new Date(item.created_at);
-      const formattedDate = `${date.getMonth() + 1
-        }-${date.getDate()}-${date.getFullYear()} ${date
-          .getHours()
-          .toString()
-          .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
+      const formattedDate = `${date.getMonth() + 1}-${date.getDate()}-${date.getFullYear()} ${date
+        .getHours()
+        .toString()
+        .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
 
-      // Extract the first 20 words from "text_entry_content"
-      const words = item.text_entry_content.split(" ");
-      const description =
-        words.slice(0, 20).join(" ") + (words.length > 20 ? "..." : "");
+      // Extract the first 20 characters from "text_entry_content"
+      let description = item.text_entry_content.slice(0, 20);
+      if (item.text_entry_content.length > 20) {
+        description += "..."; // Add ellipsis if the content exceeds 20 characters
+      }
 
       return {
         id: item.id, // ID of the tab generation
         tab_id: item.tab_id,
         date: formattedDate, // Formatted date
-        description: description, // First 20 words of text_entry_content
+        description: description, // First 20 characters of text_entry_content
         duration: "0:45", // Static duration
-        audioLink: testAudioFile
+        audioLink: testAudioFile,
       };
     });
   }
@@ -105,7 +105,7 @@ function InputHistoryTabFragment() {
       <div
         style={{
           padding: "5px 0px",
-          marginLeft: "30px",
+          marginLeft: "60px",
           display: "flex",
           flexDirection: "row",
           gap: "40px",
@@ -158,7 +158,7 @@ function InputHistoryTabFragment() {
         {/* LIST */}
         <div
           class="minimalist-scrollbar"
-          style={{ margin: "0", padding: "0", width: "100%", height: "100%" }}
+          style={{ margin: "0", padding: "10px", width: "100%", height: "100%" }}
         >
           <AnimatePresence>
             {items.map((item) => (
@@ -169,21 +169,25 @@ function InputHistoryTabFragment() {
                 animate={{ opacity: 1, x: 0 }} // Animation state for new items
                 exit={{ opacity: 0, x: 50 }} // Exit state for removing items
                 layout
+                whileHover={{ scale: 1.01 }} // Slightly increase size on hover
+                whileTap={{ scale: 1.03 }} // Increase size more on click and hold
               >
                 <div
                   key={item.id}
                   style={{
-                    margin: "0",
-                    padding: "0",
+                    margin: "0 0 5px 0",
+                    padding: "20px",
                     display: "flex",
                     flexDirection: "row",
                     width: "100%",
                     height: "60px",
                     alignItems: "center",
-                    borderBottom: "1px solid #eeeeee",
                     position: "relative",
                     userSelect: "none",
                     cursor: "pointer",
+                    border: "1px solid #eeeeee",
+                    backgroundColor: "#fff", // Ensure the background is white
+                    borderRadius: "60px", // Rounded corners for smoother look
                   }}
                   onClick={handleGenerationClick(item)}
                 >
@@ -202,7 +206,7 @@ function InputHistoryTabFragment() {
                   <div
                     style={{
                       margin: "0",
-                      padding: "0px 0px 0px 30px",
+                      padding: "0px 20px 0px 30px",
                       display: "flex",
                       flexDirection: "row",
                       position: "absolute",

@@ -17,6 +17,7 @@ import {
   faAngleRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import { useSpring, animated } from "react-spring";
 import {
   getLiveTabByUserId,
@@ -26,6 +27,7 @@ import {
   getTabGenerationUserAndTabAndGenerationId,
   updateTabName,
   deleteTab,
+  getVoiceList
 } from "../../service/DataService";
 import {
   createNewTab,
@@ -166,6 +168,16 @@ export function setAudioFile(newAudioSrc) {
   }
 }
 
+const dropdownVariants = {
+  hidden: { opacity: 0, y: -10 },
+  visible: { opacity: 1, y: 0 },
+};
+
+const arrowVariants = {
+  hidden: { opacity: 0, x: -10 }, // Start position (to the left)
+  visible: { opacity: 1, x: 0 },   // End position (centered)
+};
+
 function InputChatboxTabFragment() {
   const dispatch = useDispatch();
   const tabData = useSelector((state) => state.tabs.present.tabData);
@@ -196,6 +208,11 @@ function InputChatboxTabFragment() {
   const [charCount, setCharCount] = useState(0);
   const [isLimitReached, setIsLimitReached] = useState(false);
   const [isMiddleMouseDown, setIsMiddleMouseDown] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedVoice, setSelectedVoice] = useState(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const voices = getVoiceList();
+
   const maxCharCount = 5000;
 
   useEffect(() => {
@@ -205,6 +222,17 @@ function InputChatboxTabFragment() {
   changeAudioSrc = (newAudioSrc) => {
     setAudioSrc(newAudioSrc);
     handlePlayPause();
+  };
+
+  const handleToggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const handleSelectVoice = (voice) => {
+    setSelectedVoice(voice);
+    console.log('Selected Voice ID:', selectedVoice?.id);
+    console.log('Current Voice ID:', voice.id);
+    setIsOpen(false);
   };
 
   const fetchData = async () => {
@@ -631,7 +659,17 @@ function InputChatboxTabFragment() {
           >
             <motion.div
               whileTap={{ scale: 1.2 }} // Scale animation on click
-              style={{ margin: '0', padding: '0', width: '30px', position: 'absolute', right: '40px', display: 'flex', flexDirection: 'row', gap: '10px', padding: '5px 0px', justifyContent: 'center', alignItems: 'center' }}
+              style={{
+                margin: '0',
+                padding: '0',
+                width: '30px',
+                position: 'absolute',
+                display: 'flex',
+                flexDirection: 'row',
+                gap: '10px',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
             >
               <p
                 style={{
@@ -650,12 +688,12 @@ function InputChatboxTabFragment() {
               <FontAwesomeIcon
                 icon={faAngleLeft}
                 onClick={scrollLeftButton}
-                style={{ cursor: "pointer", width: "8px" }}
+                style={{ cursor: "pointer", width: "8px", margin: "0", padding: "0" }}
               />
               <FontAwesomeIcon
                 icon={faAngleRight}
                 onClick={scrollRightButton}
-                style={{ cursor: "pointer", width: "8px" }}
+                style={{ cursor: "pointer", width: "8px", margin: "0", padding: "0" }}
               />
             </motion.div>
           </div>
@@ -668,6 +706,7 @@ function InputChatboxTabFragment() {
             padding: "0",
             paddingTop: "10px",
             paddingRight: "30px",
+            zIndex: 1 // Lower stack level
           }}
         >
           {Array.isArray(currentSessions) && currentSessions.length > 0 ? (
@@ -678,6 +717,12 @@ function InputChatboxTabFragment() {
                   animate={{ opacity: 1 }}
                   initial={{ opacity: 0 }}
                   transition={{ duration: 0.5 }}
+                  style={{
+                    width: "100%",
+                    height: "100%", // Ensure the height is set to 100% of the parent container
+                    display: "flex", // Use flexbox to ensure proper sizing
+                    alignItems: "flex-start", // Align items to the start
+                  }}
                 >
                   <textarea
                     key={index}
@@ -687,7 +732,7 @@ function InputChatboxTabFragment() {
                       margin: "0",
                       padding: "0",
                       width: "100%",
-                      height: "calc(100% - 140px)",
+                      height: "calc(100% - 150px)",
                       paddingLeft: "60px",
                       borderWidth: "0",
                       fontSize: "20px",
@@ -708,21 +753,114 @@ function InputChatboxTabFragment() {
           )}
         </div>
 
-        <div style={{ padding: '0', margin: '0', paddingLeft: '60px', paddingRight: '30px', display: 'flex', flexDirection: 'column', width: '100%', position: 'absolute', bottom: '0', height: '150px', justifyContent: 'end', gap: '20px', backdropFilter: 'blur(10px)', backgroundColor: 'rgba(255, 255, 255, 0.5)' }}>
+        <div style={{ padding: '0', margin: '0', paddingLeft: '60px', paddingRight: '30px', display: 'flex', flexDirection: 'column', width: '100%', position: 'absolute', bottom: '0', height: '160px', justifyContent: 'end', gap: '20px', backdropFilter: 'blur(10px)', backgroundColor: 'rgba(255, 255, 255, 0.5)', zIndex: 2 }}>
           <div style={{ width: '100%', padding: '0', margin: '0', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-            <div style={{ padding: '0', margin: '0', display: 'flex', flexDirection: 'row', gap: '20px', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
-              <img src={image} style={{ width: '20px', height: '20px' }} alt="Description" />
-              <p style={{ lineHeight: '20px', margin: '0px', fontWeight: 'bold' }}>HN - Ngọc Huyền</p>
+            <div
+              style={{ position: 'relative', display: 'inline-block' }}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+            >
+              <div
+                onClick={handleToggleDropdown}
+                style={{
+                  paddingRight: '10px',
+                  fontSize: '16px',
+                  cursor: 'pointer',
+                  borderRadius: '4px',
+                  backgroundColor: '#fff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                }}
+              >
+                <motion.div
+                  initial="hidden"
+                  animate={isHovered || isOpen ? "visible" : "hidden"}
+                  variants={arrowVariants}
+                  transition={{ duration: 0.3 }}
+                  style={{ display: 'flex', alignItems: 'center' }}
+                >
+                  <FontAwesomeIcon
+                    icon={faChevronUp}
+                    style={{ fontSize: '16px', marginLeft: '10px' }}
+                  />
+                </motion.div>
+                <img
+                  src={image} // Replace with actual image if available
+                  alt="Voice"
+                  style={{ width: '20px', height: '20px' }}
+                />
+                <p style={{ margin: '0', fontWeight: 'bold' }}>
+                  {selectedVoice ? selectedVoice.voice_name : 'Select Voice'}
+                </p>
+              </div>
+              <AnimatePresence>
+                {isOpen && (
+                  <motion.div
+                    initial="hidden"
+                    animate="visible"
+                    exit="hidden"
+                    variants={dropdownVariants}
+                    style={{
+                      position: 'absolute',
+                      bottom: '100%', // Position above the main item
+                      left: '18px', // Align with the main item
+                      backgroundColor: '#fff',
+                      borderRadius: '20px',
+                      border: '1px solid #ddd',
+                      boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                      padding: '5px',
+                      zIndex: 1000,
+                      width: '100%',
+                    }}
+                  >
+                    {voices.map((voice) => (
+                      <div
+                        key={voice.id}
+                        onClick={() => handleSelectVoice(voice)}
+                        style={{
+                          padding: '10px',
+                          cursor: 'pointer',
+                          borderRadius: '20px',
+                          border: selectedVoice?.id === voice.id ? "1px solid #eeeeee" : "1px solid #fff"
+                        }}
+                      >
+                        <img
+                          src={image} // Replace with actual image if available
+                          alt="Voice"
+                          style={{ width: '20px', height: '20px', marginRight: '10px' }}
+                        />
+                        {voice.voice_name}
+                      </div>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
             <div style={{ padding: '0', margin: '0', display: 'flex', flexDirection: 'row', gap: '50px', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
-              <div style={{ padding: '0', margin: '0', display: 'flex', flexDirection: 'row', gap: '0px', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+              <div style={{ padding: '0', margin: '0', display: 'flex', flexDirection: 'row', gap: '0px', justifyContent: 'flex-end', alignItems: 'center', height: '100%' }}>
                 <p className={isLimitReached ? 'char-count-limit' : ''} style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0' }}>{charCount}</p>
                 <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0' }}>/{maxCharCount}</p>
               </div>
               <motion.div
                 whileTap={{ scale: 1.2 }} // Scale animation on click
               >
-                <p style={{ color: '#367AFF', fontSize: '14px', margin: '0', padding: '0', cursor: 'pointer' }} onClick={handleGenerateOuput}>Generate Speech</p>
+                <p
+                  style={{
+                    color: '#367AFF',
+                    fontSize: '14px',
+                    margin: '0',
+                    padding: '8px 12px', // Adjust padding for better spacing inside the border
+                    cursor: 'pointer',
+                    border: '1px solid #367AFF', // Border with the same color as the text
+                    borderRadius: '20px', // Rounded corners
+                    display: 'inline-block', // Ensures the border wraps tightly around the text
+                    userSelect: 'none', // Prevents text selection
+                  }}
+                  onClick={handleGenerateOuput}
+                >
+                  Generate Speech
+                </p>
               </motion.div>
             </div>
           </div>

@@ -113,6 +113,22 @@ export const getLiveTabByUserId = (user_id) => api.get(`/users/${user_id}/tabs`)
 export const getChatBoxSession = (user_id, tab_id) => api.get(`/users/${user_id}/tabs/${tab_id}/tab_generations/1st`);
 export const getTabGenerationUserAndTabAndGenerationId = (user_id, tab_id, tab_generation_id) => api.get(`/users/${user_id}/tabs/${tab_id}/tab_generations/${tab_generation_id}`);
 
+
+export const getVoiceList = () => {
+    return [
+        {
+            id: 1,
+            voice_name: "Nam Anh",
+            gender: 'M'
+        },
+        {
+            id: 2,
+            voice_name: "Hoài My",
+            gender: 'F'
+        },
+    ]
+}
+
 // POST
 export const createTab = async (tab) => {
     try {

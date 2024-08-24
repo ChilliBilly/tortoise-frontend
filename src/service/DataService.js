@@ -91,12 +91,12 @@ export const liveTabName = {
     ]
 }
 
-export const gettestHistoryData = () => {
-    return testHistoryData.items;
+export const getHistoryData = (user_id, tab_id) => {
+    return api.get(`/users/${user_id}/tabs/${tab_id}/tab_generations/`);
 };
 
-export const getTestAllHistoryData = () => {
-    return testAllHistoryData.items;
+export const getAllHistoryData = (user_id) => {
+    return api.get(`/users/${user_id}/tab_generations/`);
 }
 
 export const getCurrentChatBoxSession = () => {
@@ -111,6 +111,7 @@ export const getLiveTabName = () => {
 
 export const getLiveTabByUserId = (user_id) => api.get(`/users/${user_id}/tabs`);
 export const getChatBoxSession = (user_id, tab_id) => api.get(`/users/${user_id}/tabs/${tab_id}/tab_generations/1st`);
+export const getTabGenerationUserAndTabAndGenerationId = (user_id, tab_id, tab_generation_id) => api.get(`/users/${user_id}/tabs/${tab_id}/tab_generations/${tab_generation_id}`);
 
 // POST
 export const createTab = async (tab) => {
@@ -140,14 +141,43 @@ export const createTabGeneration = async (tabGeneration) => {
         return response.data;
     } catch (error) {
         if (error.response) {
-            // The request was made and the server responded with a status code
-            // that falls out of the range of 2xx
             throw error.response.data;
         } else if (error.request) {
-            // The request was made but no response was received
             throw new Error("No response received from server");
         } else {
-            // Something happened in setting up the request that triggered an Error
+            throw new Error("Error setting up the request");
+        }
+    }
+}
+
+
+// UPDATE
+export const updateTabName = async (user_id, tab_id, tab_name) => {
+    try {
+        const response = await api.put(`/users/${user_id}/tabs/${tab_id}`, { tab_name: tab_name });
+        return response.data;
+    } catch (error) {
+        if (error.response) {
+            throw error.response.data;
+        } else if (error.request) {
+            throw new Error("No response received from server");
+        } else {
+            throw new Error("Error setting up the request");
+        }
+    }
+}
+
+// DELETE
+export const deleteTab = async (user_id, tab_id) => {
+    try {
+        const response = await api.delete(`/users/${user_id}/tabs/${tab_id}`);
+        return response.data;
+    } catch (error) {
+        if (error.response) {
+            throw error.response.data;
+        } else if (error.request) {
+            throw new Error("No response received from server");
+        } else {
             throw new Error("Error setting up the request");
         }
     }

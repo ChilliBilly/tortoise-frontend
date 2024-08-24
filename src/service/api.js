@@ -2,7 +2,8 @@
 
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/v1";
+const API_URL = "https://face-swap.12pmtech.link/api/v1";
+const AUDIO_API_URL = "https://face-swap.12pmtech.link/static/user/";
 
 const api = axios.create({
   baseURL: API_URL,

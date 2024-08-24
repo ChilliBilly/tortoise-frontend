@@ -1,11 +1,19 @@
 import { tab } from "@testing-library/user-event/dist/tab";
 import axios from "axios";
-const API_URL = "http://localhost:5000/api/v1";
+const API_URL = "https://face-swap.12pmtech.link/api/v1";
+export const AUDIO_API_URL = "https://face-swap.12pmtech.link/static";
 
 const api = axios.create({
     baseURL: API_URL,
     headers: {
         "Content-Type": "application/json",
+    },
+});
+
+const api_audio = axios.create({
+    baseURL: AUDIO_API_URL,
+    headers: {
+        "Content-Type": "audio/wav",
     },
 });
 
@@ -112,7 +120,7 @@ export const getLiveTabName = () => {
 export const getLiveTabByUserId = (user_id) => api.get(`/users/${user_id}/tabs`);
 export const getChatBoxSession = (user_id, tab_id) => api.get(`/users/${user_id}/tabs/${tab_id}/tab_generations/1st`);
 export const getTabGenerationUserAndTabAndGenerationId = (user_id, tab_id, tab_generation_id) => api.get(`/users/${user_id}/tabs/${tab_id}/tab_generations/${tab_generation_id}`);
-
+export const getAudioByFileName = (user_id, audio_file_name) => api_audio.get(`/user/${user_id}/${audio_file_name}`);
 
 export const getVoiceList = () => {
     return [
@@ -153,7 +161,7 @@ export const createTab = async (tab) => {
 export const createTabGeneration = async (tabGeneration) => {
     try {
         const response = await api.post(`/users/${tabGeneration.user_id}/tabs/${tabGeneration.tab_id}/tab_generations`,
-            { tab_id: tabGeneration.tab_id, text_entry_content: tabGeneration.text_entry_content, language: "en" });
+            { tab_id: tabGeneration.tab_id, text_entry_content: tabGeneration.text_entry_content, language: "vi", voice_id: 3 });
         return response.data;
     } catch (error) {
         if (error.response) {

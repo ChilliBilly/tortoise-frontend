@@ -1,12 +1,11 @@
 import './InputHistoryTabFragment.css';
 import playButtonLightGray from '../../resources/images/playbutton-light-gray.png'
 import downloadButtonGray from '../../resources/images/download-gray.png'
-import { getHistoryData, getAllHistoryData } from '../../service/DataService';
+import { getHistoryData, getAllHistoryData, AUDIO_API_URL } from '../../service/DataService';
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { doSelectGeneration, setAudioFile } from "./InputChatboxTabFragment";
 import { AnimatePresence, motion } from 'framer-motion';
-import testAudioFile from "../../resources/audios/voice-1.wav";
 let fetchDataRef = null;
 
 export function doFetch() {
@@ -73,7 +72,7 @@ function InputHistoryTabFragment() {
         date: formattedDate, // Formatted date
         description: description, // First 20 characters of text_entry_content
         duration: "0:45", // Static duration
-        audioLink: testAudioFile,
+        audio_name: item.audio_name,
       };
     });
   }
@@ -83,7 +82,8 @@ function InputHistoryTabFragment() {
   };
 
   const handleGenerationClick = (item) => () => {
-    doSelectGeneration(item.tab_id, item.id);
+    doSelectGeneration(item.tab_id, item.id, item.audio_name);
+    setAudioFile(`${AUDIO_API_URL}/user/1/${item.audio_name}`);
   };
 
   const handlePlayAudio = (e, audioSrc) => {
@@ -100,6 +100,7 @@ function InputHistoryTabFragment() {
         display: "flex",
         flexDirection: "column",
         paddingBottom: "30px",
+        userSelect: 'none'
       }}
     >
       <div
@@ -113,6 +114,7 @@ function InputHistoryTabFragment() {
           height: "50px",
           paddingRight: "30px",
           alignItems: "center",
+          userSelect: 'none'
         }}
       >
         <p
@@ -199,6 +201,7 @@ function InputHistoryTabFragment() {
                       padding: "0",
                       width: "100%",
                       userSelect: "none",
+                      userSelect: 'none'
                     }}
                   >
                     {item.date} {item.description}
@@ -214,6 +217,7 @@ function InputHistoryTabFragment() {
                       right: "0",
                       marginRight: "5px",
                       backgroundColor: "rgba(255, 255, 255, 1)",
+                      userSelect: 'none'
                     }}
                   >
                     <p
@@ -227,7 +231,7 @@ function InputHistoryTabFragment() {
                     >
                       {item.duration}
                     </p>
-                    <img
+                    {/* <img
                       src={playButtonLightGray}
                       style={{ width: "20px", height: "20px" }}
                       alt="Description"
@@ -237,7 +241,7 @@ function InputHistoryTabFragment() {
                       src={downloadButtonGray}
                       style={{ width: "20px", height: "20px" }}
                       alt="Description"
-                    />
+                    /> */}
                   </div>
                 </div>
               </motion.div>

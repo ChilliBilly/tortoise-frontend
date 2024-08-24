@@ -27,7 +27,8 @@ import {
   getTabGenerationUserAndTabAndGenerationId,
   updateTabName,
   deleteTab,
-  getVoiceList
+  getVoiceList,
+  AUDIO_API_URL
 } from "../../service/DataService";
 import {
   createNewTab,
@@ -174,8 +175,8 @@ const dropdownVariants = {
 };
 
 const arrowVariants = {
-  hidden: { opacity: 0, x: -10 }, // Start position (to the left)
-  visible: { opacity: 1, x: 0 },   // End position (centered)
+  hidden: { opacity: 0, y: 10 }, // Start position (to the left)
+  visible: { opacity: 1, y: 0 },   // End position (centered)
 };
 
 function InputChatboxTabFragment() {
@@ -220,8 +221,19 @@ function InputChatboxTabFragment() {
   }, [dispatch]);
 
   changeAudioSrc = (newAudioSrc) => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      clearInterval(intervalRef.current);
+    }
     setAudioSrc(newAudioSrc);
-    handlePlayPause();
+    setIsPlaying(false); // Ensure playback is stopped
+
+    // Use `audioRef.current` to handle playback after updating the source
+    if (audioRef.current) {
+      audioRef.current.pause(); // Stop the audio playback
+      audioRef.current.src = newAudioSrc; // Change the audio source
+      audioRef.current.load(); // Load the new audio source
+    }
   };
 
   const handleToggleDropdown = () => {
@@ -292,11 +304,14 @@ function InputChatboxTabFragment() {
       if (chatBoxSessionsByTab[selectedTabId][0].text == "") {
         throw new Error("Text cannot be null.");
       }
-      await createTabGeneration({
+      const tab_generation = await createTabGeneration({
         user_id: userId,
         tab_id: selectedTabId,
         text_entry_content: chatBoxSessionsByTab[selectedTabId][0].text,
       });
+      if (tab_generation.audio_name) {
+        setAudioFile(`${AUDIO_API_URL}/user/${userId}/${tab_generation.audio_name}`);
+      }
       doFetch();
     } catch (error) {
       console.error("Error creating tab generation:", error);
@@ -571,6 +586,7 @@ function InputChatboxTabFragment() {
           height: "100%",
           position: "relative",
           width: "100%",
+          maxWidth: '1165px',
           display: "flex",
           flexDirection: "column",
           padding: "0",
@@ -738,18 +754,56 @@ function InputChatboxTabFragment() {
                       fontSize: "20px",
                       outline: "none",
                       paddingBottom: "60px",
-                      backgroundColor: "white", // Ensure background is white to prevent overlap
+                      backgroundColor: "white",
                       zIndex: 1,
-                      userSelect: "none", // Ensure it's on top of other elements
+                      userSelect: "none",
                     }}
-                    value={item.text} // Use value to ensure textarea reflects state changes
+                    value={item.text}
                     onChange={(e) => handleTextChange(index, e.target.value)}
                   />
                 </motion.div>
               ))}
             </AnimatePresence>
           ) : (
-            <p>No sessions available</p> // You can replace this with any fallback UI you'd like
+            <div
+              style={{
+                textAlign: "center",
+                padding: "20px",
+                color: "#555",
+                fontStyle: "italic",
+                fontSize: "18px",
+                backgroundColor: "#f0f0f0",
+                borderRadius: "8px",
+                marginLeft: "60px",
+              }}
+            >
+              <p>No sessions available at the moment.</p>
+              <p>Why not start a new one?</p>
+
+              <motion.button
+                onClick={handleNewTab}
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0px 10px 20px rgba(0, 123, 255, 0.4)",
+                  background: "linear-gradient(90deg, #00b4db, #0083b0)", // gradient on hover
+                }}
+                whileTap={{ scale: 0.95 }}
+                style={{
+                  marginTop: "20px",
+                  padding: "12px 24px",
+                  fontSize: "16px",
+                  color: "white",
+                  background: "linear-gradient(90deg, #007bff, #00b4db)", // initial gradient
+                  border: "none",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  outline: "none",
+                  transition: "background 0.5s ease, box-shadow 0.3s ease",
+                }}
+              >
+                Start a New Session
+              </motion.button>
+            </div>
           )}
         </div>
 
@@ -843,30 +897,55 @@ function InputChatboxTabFragment() {
                 <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0' }}>/{maxCharCount}</p>
               </div>
               <motion.div
-                whileTap={{ scale: 1.2 }} // Scale animation on click
+                whileTap={{ scale: 1.2 }} // Scale up on click
+                whileHover={{
+                  scale: 1.1, // Slightly scale up on hover
+                  boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.2)' // Shadow effect on hover
+                }}
+                style={{
+                  display: 'inline-block',
+                  background: 'linear-gradient(270deg, #367AFF, #00b4db, #367AFF)',
+                  backgroundSize: '200% 200%',
+                  animation: 'gradientShift 8s ease infinite', // Gradient shift animation
+                  borderRadius: '20px', // Border radius to match the inner p element
+                }}
               >
                 <p
                   style={{
-                    color: '#367AFF',
                     fontSize: '14px',
                     margin: '0',
-                    padding: '8px 12px', // Adjust padding for better spacing inside the border
+                    padding: '8px 12px',
                     cursor: 'pointer',
-                    border: '1px solid #367AFF', // Border with the same color as the text
-                    borderRadius: '20px', // Rounded corners
-                    display: 'inline-block', // Ensures the border wraps tightly around the text
-                    userSelect: 'none', // Prevents text selection
+                    border: 'none', // Remove solid border to enhance gradient look
+                    borderRadius: '20px',
+                    display: 'inline-block',
+                    userSelect: 'none',
+                    color: '#fff',
+                    background: 'inherit', // Use parent background
+                    backgroundSize: '200% 200%',
+                    textAlign: 'center',
+                    transition: 'background 0.3s ease, box-shadow 0.3s ease' // Smooth transition for background and shadow
                   }}
                   onClick={handleGenerateOuput}
                 >
                   Generate Speech
                 </p>
+
+                <style>{
+                  `
+                    @keyframes gradientShift {
+                      0% { background-position: 0% 50%; }
+                      50% { background-position: 100% 50%; }
+                      100% { background-position: 0% 50%; }
+                    }
+                  `
+                }</style>
               </motion.div>
             </div>
           </div>
           <div style={{ width: '100%', padding: '0', margin: '0', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', justifyContent: 'end', height: '50px', marginBottom: '30px' }}>
             <div style={{ width: '100%', padding: '0', margin: '0', display: 'flex', flexDirection: 'row', gap: '20px', alignItems: "end" }}>
-              <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} onClick={handlePlayPause} style={{ margin: '0', padding: '0', fontSize: '28px', width: '22px' }}></FontAwesomeIcon>
+              <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} onClick={handlePlayPause} style={{ margin: '0', padding: '0', fontSize: '28px', width: '22px', cursor: 'pointer' }}></FontAwesomeIcon>
               <div style={{ width: '100%', padding: '0', margin: '0', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', fontWeight: 'bold' }}>premade/Alice, 6/23/24, 01:18</p>
                 <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', position: 'r' }}>

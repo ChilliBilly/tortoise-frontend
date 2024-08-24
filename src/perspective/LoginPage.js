@@ -24,7 +24,16 @@ function LoginPage() {
     };
 
     const handleGoogleSignIn = () => {
-        window.location.href = "http://localhost:5000/auth/login/google"; // Backend route for Google OAuth
+        const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth`;
+        const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+        const redirectUri = process.env.REACT_APP_GOOGLE_REDIRECT_URI;  // Set this to your backend endpoint
+        const scope = "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email";
+        const responseType = "code";
+        const state = "signin";
+
+        const authUrl = `${googleAuthUrl}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=${responseType}&state=${state}`;
+
+        window.location.href = authUrl;
     };
 
     return (

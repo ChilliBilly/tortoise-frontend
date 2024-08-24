@@ -1,4 +1,4 @@
-import './LeftTabFragment.css'; // Import your CSS file for styles
+import './LeftTabFragment.css'; 
 import personPortrait from '../../resources/images/person-portrait.jpg';
 import homeGray from '../../resources/images/home-gray.png';
 import ConvertTextBlue from '../../resources/images/convert-text-blue.png';
@@ -7,9 +7,10 @@ import CartGray from '../../resources/images/cart-gray.png';
 import bookGray from '../../resources/images/book-gray.png';
 import gearGray from '../../resources/images/gear-gray.png';
 import logo from '../../resources/images/logo.png';
+import logoutIcon from '../../resources/images/logout-icon.png'; 
 import LeftTabItem from './LeftTabItem';
 
-function LeftTabFragment() {
+function LeftTabFragment({ onLogout }) {
     return (
         <div className="left-tab-container">
             {/* TOP PART */}
@@ -32,6 +33,9 @@ function LeftTabFragment() {
                     <p className="section-header">SETTING</p>
                     <div className="section-items">
                         <LeftTabItem src={gearGray} alt="Settings Icon" text="Settings" />
+                        <div onClick={onLogout}>
+                            <LeftTabItem src={logoutIcon} alt="Log Out Icon" text="Log Out" />
+                        </div>
                     </div>
                 </div>
             </div>

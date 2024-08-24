@@ -1,9 +1,9 @@
-import './SignUp.css'
-import GoogleLogo from '../resources/images/google_logo.png'
-import SignUpBackground from '../resources/images/signin-background.jpg'
-import PageLogo from '../resources/images/logo.png'
+import './SignUp.css';
+import GoogleLogo from '../resources/images/google_logo.png';
+import SignUpBackground from '../resources/images/signin-background.jpg';
+import PageLogo from '../resources/images/logo.png';
 import { useState } from 'react';
-import { login } from '../service/api'; 
+import { login } from '../service/api';
 
 function LoginPage() {
     const [username, setUsername] = useState('');
@@ -21,6 +21,19 @@ function LoginPage() {
         } catch (error) {
             setError(error.message || 'Login failed');
         }
+    };
+
+    const handleGoogleSignIn = () => {
+        const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth`;
+        const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+        const redirectUri = process.env.REACT_APP_GOOGLE_REDIRECT_URI;  // Set this to your backend endpoint
+        const scope = "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email";
+        const responseType = "code";
+        const state = "signin";
+
+        const authUrl = `${googleAuthUrl}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=${responseType}&state=${state}`;
+
+        window.location.href = authUrl;
     };
 
     return (
@@ -57,7 +70,7 @@ function LoginPage() {
                 </form>
 
                 <div className="or">or</div>
-                <button className="google-signin-button">
+                <button className="google-signin-button" onClick={handleGoogleSignIn}>
                     Continue with Google <img src={GoogleLogo} alt="Google logo" className="google-logo" />
                 </button>
                 <p>Don't have an account? <a href="/signup">Sign Up</a></p>

@@ -3,7 +3,7 @@ import GoogleLogo from '../resources/images/google_logo.png';
 import SignUpBackground from '../resources/images/signup_background.jpg';
 import PageLogo from '../resources/images/logo.png';
 import { useState } from 'react';
-import { createUser } from '../service/api'; 
+import { createUser } from '../service/api';
 
 function SignUpPage() {
     const [username, setUsername] = useState(''); 
@@ -19,11 +19,14 @@ function SignUpPage() {
         try {
             const response = await createUser({ username, email, password, role }); 
             console.log('Signup successful:', response);
-            // Redirect to login or dashboard
             window.location.href = '/tts'; 
         } catch (error) {
             setError(error.message || 'Signup failed');
         }
+    };
+
+    const handleGoogleSignUp = () => {
+        window.location.href = "http://localhost:5000/auth/login/google"; // Backend route for Google OAuth
     };
 
     return (
@@ -34,11 +37,11 @@ function SignUpPage() {
             <div className="form-container">
                 <form onSubmit={handleSubmit}>
                     <h2 className='signup-text'>Sign up</h2>
-                    <div className="input-container">     
+                    <div className="input-container">
                         <input
                             type="text"
                             placeholder="Username"
-                            value={username} // Updated field name
+                            value={username}
                             onChange={(e) => setUsername(e.target.value)}
                         />
                     </div>
@@ -65,7 +68,7 @@ function SignUpPage() {
                 </form>
 
                 <div className="or">or</div>
-                <button className="google-signin-button">
+                <button className="google-signin-button" onClick={handleGoogleSignUp}>
                     Sign up with Google <img src={GoogleLogo} alt="Google logo" className="google-logo" />
                 </button>
                 <p>Already have an account? <a href="/login">Sign In</a></p>

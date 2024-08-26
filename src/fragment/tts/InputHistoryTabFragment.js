@@ -69,6 +69,13 @@ function InputHistoryTabFragment() {
         description += "..."; // Add ellipsis if the content exceeds 20 characters
       }
 
+      let name = item.text_entry_content.slice(0, 50);
+      if (item.text_entry_content.length > 50) {
+        description += "..."; // Add ellipsis if the content exceeds 50 characters
+      }
+
+      name = formattedDate + " | " + name
+
       return {
         id: item.id, // ID of the tab generation
         tab_id: item.tab_id,
@@ -77,6 +84,7 @@ function InputHistoryTabFragment() {
         duration: item.audio.audio_duration,
         status: item.audio.status,
         audio_name: item.audio.audio_name,
+        name: name
       };
     });
   }
@@ -101,17 +109,11 @@ function InputHistoryTabFragment() {
   };
 
   const handleGenerationClick = (item) => () => {
-    doSelectGeneration(item.tab_id, item.id, item.audio_name);
+    doSelectGeneration(item.tab_id, item.id);
     if (item.status == "READY") {
-      setAudioFile(`${AUDIO_API_URL}/user/${userId}/${item.audio_name}`);
+      setAudioFile(`${AUDIO_API_URL}/user/${userId}/${item.audio_name}`, item.name);
     }
   };
-
-  const handlePlayAudio = (e, audioSrc) => {
-    e.stopPropagation();
-    // TODO: set necessary info for player
-    setAudioFile(audioSrc);
-  }
 
   return (
     <div

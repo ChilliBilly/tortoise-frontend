@@ -5,7 +5,6 @@ import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import "./InputChatboxTabFragment.css";
 import image from "../../resources/images/images.png";
-import audioFile from "../../resources/audios/voice-4-long.wav";
 import {
   faUndoAlt,
   faRedoAlt,
@@ -162,9 +161,9 @@ export function doSelectGeneration(tab_id, tab_generation_id) {
 
 let changeAudioSrc = null;
 
-export function setAudioFile(newAudioSrc) {
+export function setAudioFile(newAudioSrc, name) {
   if (changeAudioSrc) {
-    changeAudioSrc(newAudioSrc);
+    changeAudioSrc(newAudioSrc, name);
   }
 }
 
@@ -197,7 +196,7 @@ function InputChatboxTabFragment() {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const audioRef = useRef(null);
-  const [audioSrc, setAudioSrc] = useState(audioFile);
+  const [audioSrc, setAudioSrc] = useState(null);
   const intervalRef = useRef(null);
   const progressBarRef = useRef(null);
   const tabContainerRef = useRef(null);
@@ -211,6 +210,7 @@ function InputChatboxTabFragment() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedVoice, setSelectedVoice] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [generationName, setGenerationName] = useState("...");
   const voices = getVoiceList();
 
   const maxCharCount = 5000;
@@ -219,7 +219,7 @@ function InputChatboxTabFragment() {
     fetchData();
   }, [dispatch]);
 
-  changeAudioSrc = (newAudioSrc) => {
+  changeAudioSrc = (newAudioSrc, name) => {
     if (audioRef.current) {
       audioRef.current.pause();
       clearInterval(intervalRef.current);
@@ -232,6 +232,10 @@ function InputChatboxTabFragment() {
       audioRef.current.pause(); // Stop the audio playback
       audioRef.current.src = newAudioSrc; // Change the audio source
       audioRef.current.load(); // Load the new audio source
+    }
+
+    if (name != null) {
+      setGenerationName(name);
     }
   };
 
@@ -940,9 +944,9 @@ function InputChatboxTabFragment() {
           </div>
           <div style={{ width: '100%', padding: '0', margin: '0', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', justifyContent: 'end', height: '50px', marginBottom: '30px' }}>
             <div style={{ width: '100%', padding: '0', margin: '0', display: 'flex', flexDirection: 'row', gap: '20px', alignItems: "end" }}>
-              <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} onClick={handlePlayPause} style={{ margin: '0', padding: '0', fontSize: '28px', width: '22px', cursor: 'pointer' }}></FontAwesomeIcon>
+              <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} onClick={audioSrc ? handlePlayPause : null} style={{ margin: '0', padding: '0', fontSize: '28px', width: '22px', cursor: 'pointer' }}></FontAwesomeIcon>
               <div style={{ width: '100%', padding: '0', margin: '0', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', fontWeight: 'bold' }}>premade/Alice, 6/23/24, 01:18</p>
+                <p style={{ color: '#757575', fontSize: '14px', margin: '0', padding: '0', fontWeight: 'bold' }}>{generationName}</p>
                 <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', position: 'r' }}>
                   <FontAwesomeIcon icon={faUndoAlt} onClick={() => handleSkip(-5)} style={{ cursor: 'pointer' }}></FontAwesomeIcon>
                   <FontAwesomeIcon icon={faRedoAlt} onClick={() => handleSkip(5)} style={{ cursor: 'pointer' }}></FontAwesomeIcon>

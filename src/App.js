@@ -1,18 +1,19 @@
 import logo from './logo.svg';
 import './App.css';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import HomePage from './perspective/HomePage';
 import LoginPage from './perspective/LoginPage';
 import SignUpPage from './perspective/SignUpPage';
 import TextToSpeechPage from './perspective/TextToSpeechPage';
 import VoiceCloningPage from './perspective/VoiceCloningPage';
 import { doFetch } from "./fragment/tts/InputHistoryTabFragment";
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
+import { UserProvider, UserContext } from './context/UserContext';
+import { verifyTokenAPI } from "./service/DataService"
 
 
 
 function App() {
-
   useEffect(() => {
     // Set up the interval to call doFetch every 5 seconds
     const intervalId = setInterval(() => {
@@ -25,16 +26,58 @@ function App() {
 
 
   return (
-    <div className="App">
-      <Routes>
-        <Route path='/' element={<HomePage />} />
-        <Route path='/login' element={<LoginPage />} />
-        <Route path='/signup' element={<SignUpPage />} />
-        <Route path='/tts' element={<TextToSpeechPage />} />
-        <Route path='/voiceclone' element={<VoiceCloningPage />} />
-      </Routes>
-    </div>
+    <UserProvider>
+      <div className="App">
+        <Routes>
+          <Route path='/' element={<HomePage />} />
+          <Route path='/login' element={<LoginPage />} />
+          <Route path='/signup' element={<SignUpPage />} />
+          <Route path='/tts' element={<ProtectedRoute><TextToSpeechPage /></ProtectedRoute>} />
+          <Route path='/voiceclone' element={<ProtectedRoute><VoiceCloningPage /></ProtectedRoute>} />
+        </Routes>
+      </div>
+    </UserProvider>
   );
 }
+
+const ProtectedRoute = ({ children }) => {
+  const navigate = useNavigate();
+  const { token, loading } = useContext(UserContext);
+  const [isValidToken, setIsValidToken] = useState(null);
+
+  useEffect(() => {
+    if (loading) {
+      return; // Do nothing while loading
+    }
+
+    const verifyToken = async () => {
+      try {
+        const response = await verifyTokenAPI(token);
+        if (response.statusText === "OK") {
+          setIsValidToken(true);
+        } else {
+          setIsValidToken(false);
+          navigate('/login');
+        }
+      } catch (error) {
+        console.error("Token verification failed", error);
+        setIsValidToken(false);
+        navigate('/login');
+      }
+    };
+
+    if (token) {
+      verifyToken();
+    } else {
+      navigate('/login');
+    }
+  }, [token, loading, navigate]);
+
+  if (loading) {
+    return <div>Loading...</div>; // or any loading indicator
+  }
+
+  return isValidToken ? children : null;
+};
 
 export default App;

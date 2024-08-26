@@ -17,6 +17,17 @@ const api_audio = axios.create({
     },
 });
 
+export const verifyTokenAPI = (token) => {
+    return api.get('/users/token/verify', {
+        params: {
+            token: token,
+        },
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+    });
+};
+
 
 export const testHistoryData = {
     items: [
@@ -162,7 +173,8 @@ export const createTabGeneration = async (tabGeneration) => {
     try {
         const response = await api.post(`/users/${tabGeneration.user_id}/tabs/${tabGeneration.tab_id}/tab_generations`,
             { tab_id: tabGeneration.tab_id, text_entry_content: tabGeneration.text_entry_content, language: "vi", voice_id: 3 });
-        return response.data;
+        console.log("Under this is data:")
+        console.log(response.data)
     } catch (error) {
         if (error.response) {
             throw error.response.data;

@@ -2,14 +2,18 @@ import './SignUp.css';
 import GoogleLogo from '../resources/images/google_logo.png';
 import SignUpBackground from '../resources/images/signup_background.jpg';
 import PageLogo from '../resources/images/logo.png';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { createUser } from '../service/api';
+import { UserContext } from '../context/UserContext';
+import { useNavigate } from 'react-router-dom';
 
 function SignUpPage() {
-    const [username, setUsername] = useState(''); 
+    const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
+    const { setUserId } = useContext(UserContext);
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -17,9 +21,10 @@ function SignUpPage() {
         const role = 'REGULAR'; // Automatically set the role to REGULAR
 
         try {
-            const response = await createUser({ username, email, password, role }); 
+            const response = await createUser({ username, email, password, role });
             console.log('Signup successful:', response);
-            window.location.href = '/tts'; 
+            setUserId(response.data.id)
+            navigate('/tts');
         } catch (error) {
             setError(error.message || 'Signup failed');
         }

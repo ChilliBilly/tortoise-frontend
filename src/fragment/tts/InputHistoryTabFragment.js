@@ -2,10 +2,11 @@ import './InputHistoryTabFragment.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch, faCheckCircle, faExclamationTriangle, faClock } from '@fortawesome/free-solid-svg-icons';
 import { getHistoryData, getAllHistoryData, AUDIO_API_URL } from '../../service/DataService';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { doSelectGeneration, setAudioFile } from "./InputChatboxTabFragment";
 import { AnimatePresence, motion } from 'framer-motion';
+import { UserContext } from '../../context/UserContext';
 let fetchDataRef = null;
 
 export function doFetch() {
@@ -20,7 +21,7 @@ function InputHistoryTabFragment() {
 
   const [items, setItems] = useState([]);
   const [selectedTab, setSelectedTab] = useState('History');
-  const [userId, setUserId] = useState(1);
+  const { userId } = useContext(UserContext);
   const [fetchState, setFetchState] = useState(false);
   const [existingItems, setExistingItems] = useState(new Set());
 

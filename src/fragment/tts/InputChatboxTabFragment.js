@@ -1,10 +1,11 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { ActionCreators } from "redux-undo";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import "./InputChatboxTabFragment.css";
 import image from "../../resources/images/images.png";
+import { UserContext } from '../../context/UserContext';
 import {
   faUndoAlt,
   faRedoAlt,
@@ -189,8 +190,7 @@ function InputChatboxTabFragment() {
   const isEditing = useSelector((state) => state.tabs.present.isEditing);
   const newTabName = useSelector((state) => state.tabs.present.newTabName);
 
-  // Define userId as 1
-  const userId = 1;
+  const { userId } = useContext(UserContext);
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -255,6 +255,7 @@ function InputChatboxTabFragment() {
 
     try {
       // Fetch the live tabs by user ID
+      console.log("This is the userId: " + userId);
       const tabs = await getLiveTabByUserId(userId);
       // Attempt to fetch the initial chat box session if there are tabs available
       if (tabs.data.length > 0) {
@@ -307,7 +308,7 @@ function InputChatboxTabFragment() {
       if (chatBoxSessionsByTab[selectedTabId][0].text == "") {
         throw new Error("Text cannot be null.");
       }
-      const tab_generation = await createTabGeneration({
+      createTabGeneration({
         user_id: userId,
         tab_id: selectedTabId,
         text_entry_content: chatBoxSessionsByTab[selectedTabId][0].text,

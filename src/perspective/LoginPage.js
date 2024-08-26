@@ -2,22 +2,32 @@ import './SignUp.css';
 import GoogleLogo from '../resources/images/google_logo.png';
 import SignUpBackground from '../resources/images/signin-background.jpg';
 import PageLogo from '../resources/images/logo.png';
-import { useState } from 'react';
-import { login } from '../service/api';
+import { useState, useContext } from 'react';
+import { loginAPI } from '../service/api';
+import { UserContext } from '../context/UserContext';
+import { useNavigate } from 'react-router-dom';
 
 function LoginPage() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
+    const { setUserId } = useContext(UserContext);
+    const navigate = useNavigate();
+    const { login } = useContext(UserContext);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            const response = await login({ username, password });
-            console.log('Login successful:', response);
-            localStorage.setItem('token', response.token);  
-            window.location.href = '/tts'; 
+            const response = await loginAPI({ username, password });
+            console.log("This is the token generated: " + response.data.access_token);
+            const userId = response.data.user.id;
+            const token = response.data.access_token;
+            login(userId, token);
+            // Check if the token is usable (this logic depends on your API; it could be an expiry check, etc.)
+            if (token) {
+                navigate('/tts'); // Navigate to the TTS page
+            }
         } catch (error) {
             setError(error.message || 'Login failed');
         }

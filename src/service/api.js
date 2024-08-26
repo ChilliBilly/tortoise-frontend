@@ -59,7 +59,7 @@ export const loginWithGoogle = () => {
   window.location.href = `${API_URL}/login/google`;
 };
 
-export const login = (credentials) => api.post("/login", credentials);
+export const loginAPI = (credentials) => api.post("/login", credentials);
 
 export const createGuest = () => api.post("/guests");
 export const getGuests = () => api.get("/guests");

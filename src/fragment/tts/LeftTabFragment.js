@@ -1,4 +1,4 @@
-import './LeftTabFragment.css'; 
+import './LeftTabFragment.css';
 import personPortrait from '../../resources/images/person-portrait.jpg';
 import homeGray from '../../resources/images/home-gray.png';
 import ConvertTextBlue from '../../resources/images/convert-text-blue.png';
@@ -7,10 +7,28 @@ import CartGray from '../../resources/images/cart-gray.png';
 import bookGray from '../../resources/images/book-gray.png';
 import gearGray from '../../resources/images/gear-gray.png';
 import logo from '../../resources/images/logo.png';
-import logoutIcon from '../../resources/images/logout-icon.png'; 
+import logoutIcon from '../../resources/images/logout-icon.png';
 import LeftTabItem from './LeftTabItem';
+import { getUser } from '../../service/DataService';
+import { useContext, useState, useEffect } from 'react';
+import { UserContext } from '../../context/UserContext'
 
 function LeftTabFragment({ onLogout }) {
+    const [userData, setUserData] = useState(null);
+    const { userId } = useContext(UserContext);
+
+    useEffect(() => {
+        const getUserData = async () => {
+            try {
+                const response = await getUser(userId);
+                setUserData(response.data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        getUserData();
+    }, [userId]);
     return (
         <div className="left-tab-container">
             {/* TOP PART */}
@@ -47,8 +65,8 @@ function LeftTabFragment({ onLogout }) {
                         <img src={personPortrait} alt="Profile" />
                     </div>
                     <div className="profile-info">
-                        <p className="account-type">Basic Account</p>
-                        <p className="user-name">John Smith</p>
+                        <p className="account-type">{userData ? userData.role : 'Loading...'}</p>
+                        <p className="user-name">{userData ? userData.username : 'Loading...'}</p>
                     </div>
                 </div>
             </div>

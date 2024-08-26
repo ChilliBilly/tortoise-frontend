@@ -314,6 +314,9 @@ function InputChatboxTabFragment() {
       if (chatBoxSessionsByTab[selectedTabId][0].text == "") {
         throw new Error("Text cannot be null.");
       }
+      if (selectedVoice == null) {
+        throw new Error("Voice is not selected");
+      }
       console.log(selectedVoice.id)
       createTabGeneration({
         user_id: userId,

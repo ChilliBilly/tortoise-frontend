@@ -1,6 +1,6 @@
 import './InputHistoryTabFragment.css';
-import playButtonLightGray from '../../resources/images/playbutton-light-gray.png'
-import downloadButtonGray from '../../resources/images/download-gray.png'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleNotch, faCheckCircle, faExclamationTriangle, faClock } from '@fortawesome/free-solid-svg-icons';
 import { getHistoryData, getAllHistoryData, AUDIO_API_URL } from '../../service/DataService';
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -33,6 +33,10 @@ function InputHistoryTabFragment() {
   };
 
   const fetchData = async (tab) => {
+    if (userId == null || selectedTabId == null) {
+      return;
+    }
+
     try {
       let items;
       if (tab === 'History') {
@@ -40,7 +44,6 @@ function InputHistoryTabFragment() {
       } else {
         items = await getAllHistoryData(userId);
       }
-      console.log(items.data)
       const transformedItems = transformItemsData(items);
       setItems(transformedItems);
       setExistingItems(prevItems => new Set([...prevItems, ...transformedItems.map(item => item.id)]));
@@ -71,11 +74,27 @@ function InputHistoryTabFragment() {
         tab_id: item.tab_id,
         date: formattedDate, // Formatted date
         description: description, // First 20 characters of text_entry_content
-        duration: "0:45", // Static duration
-        audio_name: item.audio_name,
+        duration: item.audio.audio_duration,
+        status: item.audio.status,
+        audio_name: item.audio.audio_name,
       };
     });
   }
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case "CREATED":
+        return <FontAwesomeIcon icon={faClock} color="#367AFF" />;
+      case "PROCESSING":
+        return <FontAwesomeIcon icon={faCircleNotch} spin color="#367AFF" />;
+      case "FAILED":
+        return <FontAwesomeIcon icon={faExclamationTriangle} color="#367AFF" />;
+      case "READY":
+        return <FontAwesomeIcon icon={faCheckCircle} color="#367AFF" />;
+      default:
+        return null;
+    }
+  };
 
   const handleTabClick = (tab) => {
     setSelectedTab(tab);
@@ -83,7 +102,9 @@ function InputHistoryTabFragment() {
 
   const handleGenerationClick = (item) => () => {
     doSelectGeneration(item.tab_id, item.id, item.audio_name);
-    setAudioFile(`${AUDIO_API_URL}/user/1/${item.audio_name}`);
+    if (item.status == "READY") {
+      setAudioFile(`${AUDIO_API_URL}/user/${userId}/${item.audio_name}`);
+    }
   };
 
   const handlePlayAudio = (e, audioSrc) => {
@@ -217,31 +238,37 @@ function InputHistoryTabFragment() {
                       right: "0",
                       marginRight: "5px",
                       backgroundColor: "rgba(255, 255, 255, 1)",
-                      userSelect: 'none'
+                      userSelect: 'none',
+                      alignItems: 'center'
                     }}
                   >
-                    <p
-                      style={{
-                        color: "#757575",
-                        fontSize: "14px",
-                        margin: "0",
-                        padding: "0",
-                        userSelect: "none",
+                    {item.duration && (
+                      <p
+                        style={{
+                          color: "#757575",
+                          fontSize: "14px",
+                          margin: "0",
+                          padding: "0",
+                          userSelect: "none",
+                        }}
+                      >
+                        {item.duration}
+                      </p>
+                    )}
+                    <motion.div
+                      key={item.status} // animate when the status changes
+                      initial={{ opacity: 0, scale: 0.5, rotate: -15 }}
+                      animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                      exit={{ opacity: 0, scale: 0.5, rotate: 15 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 20,
+                        mass: 0.5,
                       }}
                     >
-                      {item.duration}
-                    </p>
-                    {/* <img
-                      src={playButtonLightGray}
-                      style={{ width: "20px", height: "20px" }}
-                      alt="Description"
-                      onClick={(e) => handlePlayAudio(e, item.audioLink)}
-                    />
-                    <img
-                      src={downloadButtonGray}
-                      style={{ width: "20px", height: "20px" }}
-                      alt="Description"
-                    /> */}
+                      {getStatusIcon(item.status)}
+                    </motion.div>
                   </div>
                 </div>
               </motion.div>

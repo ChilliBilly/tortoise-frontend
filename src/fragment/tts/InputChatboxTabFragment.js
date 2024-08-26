@@ -37,7 +37,6 @@ import {
   deleteExistingTab,
   initApp,
 } from "../../redux/actions";
-import { doFetch } from "./InputHistoryTabFragment";
 import { AnimatePresence, motion } from 'framer-motion';
 
 const ItemType = {
@@ -309,10 +308,6 @@ function InputChatboxTabFragment() {
         tab_id: selectedTabId,
         text_entry_content: chatBoxSessionsByTab[selectedTabId][0].text,
       });
-      if (tab_generation.audio_name) {
-        setAudioFile(`${AUDIO_API_URL}/user/${userId}/${tab_generation.audio_name}`);
-      }
-      doFetch();
     } catch (error) {
       console.error("Error creating tab generation:", error);
     }

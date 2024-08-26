@@ -34,7 +34,7 @@ function InputHistoryTabFragment() {
   };
 
   const fetchData = async (tab) => {
-    if (userId == null || selectedTabId == null) {
+    if (userId == null) {
       return;
     }
 
@@ -77,12 +77,14 @@ function InputHistoryTabFragment() {
 
       name = formattedDate + " | " + name
 
+      const duration = formatDuration(item.audio.audio_duration);
+
       return {
         id: item.id, // ID of the tab generation
         tab_id: item.tab_id,
         date: formattedDate, // Formatted date
         description: description, // First 20 characters of text_entry_content
-        duration: item.audio.audio_duration,
+        duration: duration,
         status: item.audio.status,
         audio_name: item.audio.audio_name,
         name: name
@@ -90,10 +92,17 @@ function InputHistoryTabFragment() {
     });
   }
 
+  function formatDuration(seconds) {
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
+
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  }
+
   const getStatusIcon = (status) => {
     switch (status) {
       case "CREATED":
-        return <FontAwesomeIcon icon={faClock} color="#367AFF" />;
+      // return <FontAwesomeIcon icon={faClock} color="#367AFF" />;
       case "PROCESSING":
         return <FontAwesomeIcon icon={faCircleNotch} spin color="#367AFF" />;
       case "FAILED":
@@ -181,7 +190,6 @@ function InputHistoryTabFragment() {
           overflowY: "auto",
         }}
       >
-        {/* LIST */}
         <div
           class="minimalist-scrollbar"
           style={{ margin: "0", padding: "10px", width: "100%", height: "100%" }}

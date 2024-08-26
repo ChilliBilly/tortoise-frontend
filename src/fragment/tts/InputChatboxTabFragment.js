@@ -211,7 +211,7 @@ function InputChatboxTabFragment() {
   const [selectedVoice, setSelectedVoice] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
   const [generationName, setGenerationName] = useState("...");
-  const voices = getVoiceList();
+  const [voices, setVoices] = useState([]);
 
   const maxCharCount = 5000;
 
@@ -245,8 +245,6 @@ function InputChatboxTabFragment() {
 
   const handleSelectVoice = (voice) => {
     setSelectedVoice(voice);
-    console.log('Selected Voice ID:', selectedVoice?.id);
-    console.log('Current Voice ID:', voice.id);
     setIsOpen(false);
   };
 
@@ -291,6 +289,14 @@ function InputChatboxTabFragment() {
 
   useEffect(() => {
     selectGenerationRef.current = handleSelectGeneration;
+    getVoiceList()
+      .then(response => {
+        console.log(response.data)
+        setVoices(response.data);
+      })
+      .catch(error => {
+        console.error("Failed to load voices: ", error);
+      });
   }, []);
 
   useEffect(() => {
@@ -308,11 +314,12 @@ function InputChatboxTabFragment() {
       if (chatBoxSessionsByTab[selectedTabId][0].text == "") {
         throw new Error("Text cannot be null.");
       }
+      console.log(selectedVoice.id)
       createTabGeneration({
         user_id: userId,
         tab_id: selectedTabId,
         text_entry_content: chatBoxSessionsByTab[selectedTabId][0].text,
-      });
+      }, selectedVoice);
     } catch (error) {
       console.error("Error creating tab generation:", error);
     }
@@ -865,7 +872,7 @@ function InputChatboxTabFragment() {
                       boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
                       padding: '5px',
                       zIndex: 1000,
-                      width: '100%',
+                      width: '250px',
                     }}
                   >
                     {voices.map((voice) => (
@@ -884,7 +891,7 @@ function InputChatboxTabFragment() {
                           alt="Voice"
                           style={{ width: '20px', height: '20px', marginRight: '10px' }}
                         />
-                        {voice.voice_name}
+                        {voice.description}
                       </div>
                     ))}
                   </motion.div>

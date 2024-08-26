@@ -53,7 +53,7 @@ const ProtectedRoute = ({ children }) => {
     const verifyToken = async () => {
       try {
         const response = await verifyTokenAPI(token);
-        if (response.statusText === "OK") {
+        if (response.data.message == 'Token is valid') {
           setIsValidToken(true);
         } else {
           setIsValidToken(false);

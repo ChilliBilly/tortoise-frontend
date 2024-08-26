@@ -128,25 +128,11 @@ export const getLiveTabName = () => {
 
 // GET
 export const getUser = (id) => api.get(`/users/${id}`);
+export const getVoiceList = () => api.get(`/voices/`);
 export const getLiveTabByUserId = (user_id) => api.get(`/users/${user_id}/tabs`);
 export const getChatBoxSession = (user_id, tab_id) => api.get(`/users/${user_id}/tabs/${tab_id}/tab_generations/1st`);
 export const getTabGenerationUserAndTabAndGenerationId = (user_id, tab_id, tab_generation_id) => api.get(`/users/${user_id}/tabs/${tab_id}/tab_generations/${tab_generation_id}`);
 export const getAudioByFileName = (user_id, audio_file_name) => api_audio.get(`/user/${user_id}/${audio_file_name}`);
-
-export const getVoiceList = () => {
-    return [
-        {
-            id: 1,
-            voice_name: "Nam Anh",
-            gender: 'M'
-        },
-        {
-            id: 2,
-            voice_name: "Hoài My",
-            gender: 'F'
-        },
-    ]
-}
 
 // POST
 export const createTab = async (tab) => {
@@ -169,10 +155,10 @@ export const createTab = async (tab) => {
 };
 
 
-export const createTabGeneration = async (tabGeneration) => {
+export const createTabGeneration = async (tabGeneration, selectedVoice) => {
     try {
         const response = await api.post(`/users/${tabGeneration.user_id}/tabs/${tabGeneration.tab_id}/tab_generations`,
-            { tab_id: tabGeneration.tab_id, text_entry_content: tabGeneration.text_entry_content, language: "vi", voice_id: 3 });
+            { tab_id: tabGeneration.tab_id, text_entry_content: tabGeneration.text_entry_content, language: selectedVoice.language, voice_id: selectedVoice.id });
         console.log("Under this is data:")
         console.log(response.data)
     } catch (error) {

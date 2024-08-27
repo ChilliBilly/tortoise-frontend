@@ -128,7 +128,7 @@ export const getLiveTabName = () => {
 
 // GET
 export const getUser = (id) => api.get(`/users/${id}`);
-export const getVoiceList = () => api.get(`/voices/`);
+export const getVoiceList = (user_id) => api.get(`users/${user_id}/voices/`);
 export const getLiveTabByUserId = (user_id) => api.get(`/users/${user_id}/tabs`);
 export const getChatBoxSession = (user_id, tab_id) => api.get(`/users/${user_id}/tabs/${tab_id}/tab_generations/1st`);
 export const getTabGenerationUserAndTabAndGenerationId = (user_id, tab_id, tab_generation_id) => api.get(`/users/${user_id}/tabs/${tab_id}/tab_generations/${tab_generation_id}`);

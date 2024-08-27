@@ -289,7 +289,7 @@ function InputChatboxTabFragment() {
 
   useEffect(() => {
     selectGenerationRef.current = handleSelectGeneration;
-    getVoiceList()
+    getVoiceList(userId)
       .then(response => {
         console.log(response.data)
         setVoices(response.data);

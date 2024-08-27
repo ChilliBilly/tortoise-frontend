@@ -12,6 +12,13 @@ const api = axios.create({
   },
 });
 
+const api_voice = axios.create({
+  baseURL: API_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
 export const createUser = async (userData) => {
   try {
     const response = await api.post("/users/", userData);
@@ -83,14 +90,17 @@ export const updateUserVoice = (userId, voiceId, voiceData) =>
 export const getAllVoices = () => api.get("/voices/");
 export const getVoice = (voiceId) => api.get(`/voices/${voiceId}`);
 
-export const createAudio = async (audioData) => {
+export const createAudio = async (audioData, user_id, title, description) => {
   try {
     // Create a FormData object to send the audio data
     const formData = new FormData();
-    formData.append('audio', audioData);
+    formData.append('file', audioData);
+    formData.append('voice_name', title)
+    formData.append('language', "vi");
+    formData.append('description', description);
 
     // Send the POST request with FormData
-    const response = await axios.post('/audios/', formData, {
+    const response = await api_voice.post(`users/${user_id}/voices/`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data', // Ensure the correct content type for file uploads
       },

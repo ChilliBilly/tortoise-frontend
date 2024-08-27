@@ -140,14 +140,14 @@ function MainComponent() {
                     <motion.h1
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 1, ease: 'easeOut' }}
+                        transition={{ duration: 2, ease: 'easeOut' }}
                     >
                         Welcome to Generative Voice AI
                     </motion.h1>
                     <motion.p
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 1, ease: 'easeOut', delay: 0.2 }}
+                        transition={{ duration: 2, ease: 'easeOut', delay: 0.2 }}
                     >
                         Transform text into lifelike speech instantly with our cutting-edge AI voice generator.
                         Perfect for video creators, developers, and businesses seeking high-quality voice synthesis
@@ -157,9 +157,9 @@ function MainComponent() {
                         className="get-started-button"
                         onClick={handleGetStarted}
                         initial={{ scale: 1 }}
-                        whileHover={{ scale: 1.02 }}
+                        whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.98 }}
-                        transition={{ duration: 0.2 }}
+                        transition={{ duration: 1 }}
                     >
                         Get Started
                     </motion.button>
@@ -168,7 +168,7 @@ function MainComponent() {
                     className="image-section"
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 1, ease: 'easeOut', delay: 0.4 }}
+                    transition={{ duration: 3, ease: 'easeOut', delay: 0.4 }}
                 >
                     <img
                         src={globeImage}

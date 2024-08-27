@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import './AddVoiceComponent.css';
 import closeIcon from '../../resources/images/close-icon.png';
 import addIcon from '../../resources/images/add-icon.png';
@@ -6,8 +6,10 @@ import VoiceCardFragment from '../../fragment/clone/VoiceCardFragment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMicrophone, faStop, faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 import { createAudio } from '../../service/api'; // Replace with the actual path
+import { UserContext } from '../../context/UserContext';
 
 function AddVoiceComponent() {
+    const { userId } = useContext(UserContext);
     const [voices, setVoices] = useState([]);
     const [showForm, setShowForm] = useState(false);
     const [newVoice, setNewVoice] = useState({
@@ -43,8 +45,8 @@ function AddVoiceComponent() {
         setVoices((prevVoices) => [...prevVoices, tempVoice]);
 
         try {
-            const audioBlob = new Blob([/* audio data */], { type: 'audio/mpeg' }); // Create a Blob or get from input
-            const data = await createAudio(audioBlob);
+            const audioBlob = new Blob([tempVoice.audio], { type: 'audio/mpeg' }); // Create a Blob or get from input
+            const data = await createAudio(audioBlob, userId, tempVoice.title, tempVoice.description);
 
             // Update the voice with the received data and set status to 'ready'
             setVoices((prevVoices) =>

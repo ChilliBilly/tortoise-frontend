@@ -3,7 +3,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 30px 50px;
-    background-color: #ffffff;
+    background-color: transparent;
     user-select: none;
 }
 
@@ -64,4 +64,14 @@
     margin-left: auto;
     margin-right: auto;
     user-select: none;
+}
+
+.star-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    background: #000;
 }

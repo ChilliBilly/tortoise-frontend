@@ -28,15 +28,12 @@ function VoiceCardFragment({ voice, onDelete }) {
 
     return (
         <div className="voice-card">
-            <h3>{voice.title}</h3>
             <p>{voice.description}</p>
             <p className={`voice-status ${voice.status}`}>
-                {voice.status === 'processing' && 'Processing...'}
-                {voice.status === 'ready' && 'Ready'}
-                {voice.status === 'failed' && 'Failed'}
+                {voice.status}
             </p>
             <div className="voice-card-buttons">
-                {audioBlob && voice.status === 'ready' ? (
+                {/* {audioBlob && voice.status === 'ready' ? (
                     <>
                         <button className="play-button" onClick={handlePlayPause}>
                             <FontAwesomeIcon icon={faPlay} />
@@ -44,10 +41,14 @@ function VoiceCardFragment({ voice, onDelete }) {
                         </button>
                         <audio ref={audioRef} src={URL.createObjectURL(audioBlob)} />
                     </>
-                ) : null}
-                <button className="delete-button" onClick={() => onDelete(voice)}>
-                    <FontAwesomeIcon icon={faTrash} /> Delete
-                </button>
+                ) : null} */}
+                {
+                    voice.is_default != true ? (
+                        <button className="delete-button" onClick={() => onDelete(voice)}>
+                            <FontAwesomeIcon icon={faTrash} /> Delete
+                        </button>
+                    ) : null
+                }
             </div>
         </div>
     );

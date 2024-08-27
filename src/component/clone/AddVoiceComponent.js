@@ -6,11 +6,12 @@ import VoiceCardFragment from '../../fragment/clone/VoiceCardFragment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMicrophone, faStop, faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 import { createAudio } from '../../service/api'; // Replace with the actual path
-import { getVoiceList } from '../../service/DataService'; // Replace with the actual path
+import { getVoiceList, deleteVoice } from '../../service/DataService'; // Replace with the actual path
 
 import { UserContext } from '../../context/UserContext';
 
 function AddVoiceComponent() {
+    const [isProcessing, setIsProcessing] = useState(false); // State to track if processing is happening
     const { userId } = useContext(UserContext);
     const [voices, setVoices] = useState([]);
     const [showForm, setShowForm] = useState(false);
@@ -19,6 +20,7 @@ function AddVoiceComponent() {
         description: '',
         audio: null,
         status: 'processing',
+        language: 'vi'
     });
     const [isRecording, setIsRecording] = useState(false);
     const [isPreviewing, setIsPreviewing] = useState(false);
@@ -42,13 +44,14 @@ function AddVoiceComponent() {
     };
 
     const handleAddVoice = async () => {
+        setIsProcessing(true);
         // Create a temporary card with "processing" status
         const tempVoice = { ...newVoice, status: 'processing' };
         setVoices((prevVoices) => [...prevVoices, tempVoice]);
 
         try {
             const audioBlob = new Blob([tempVoice.audio], { type: 'audio/mpeg' }); // Create a Blob or get from input
-            const data = await createAudio(audioBlob, userId, tempVoice.title, tempVoice.description);
+            const data = await createAudio(audioBlob, userId, tempVoice.title, tempVoice.description, tempVoice.language);
 
             // Update the voice with the received data and set status to 'ready'
             setVoices((prevVoices) =>
@@ -72,10 +75,15 @@ function AddVoiceComponent() {
         }
     };
 
-    const handleDeleteVoice = (voiceToDelete) => {
-        setVoices((prevVoices) =>
-            prevVoices.filter((voice) => voice !== voiceToDelete)
-        );
+    const handleDeleteVoice = async (voiceToDelete) => {
+        try {
+            await deleteVoice(userId, voiceToDelete.id);
+            setVoices((prevVoices) =>
+                prevVoices.filter((voice) => voice !== voiceToDelete)
+            );
+        } catch (error) {
+            console.log("Unable to delete voice: " + error)
+        }
     };
 
     const handlePlayPause = (audioFile) => {
@@ -237,33 +245,59 @@ function AddVoiceComponent() {
                                 value={newVoice.description}
                                 onChange={handleInputChange}
                             />
-                            <input
-                                type="file"
-                                name="audio"
-                                accept="audio/*"
-                                onChange={handleFileChange}
-                            />
-                            <div className="record-button-wrapper">
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <input
+                                    type="file"
+                                    name="audio"
+                                    accept="audio/*"
+                                    onChange={handleFileChange}
+                                />
+                                <select
+                                    name="language"
+                                    value={newVoice.language}
+                                    onChange={handleInputChange}
+                                    className="language-select"
+                                >
+                                    <option value="vi">Vietnamese</option>
+                                    <option value="en">English</option>
+                                </select>
+                            </div>
+                            <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', gap: '20px' }}>
                                 <button
                                     className="record-button"
                                     onClick={isRecording ? stopRecording : startRecording}
                                 >
                                     <FontAwesomeIcon icon={isRecording ? faStop : faMicrophone} />
-                                    {isRecording ? 'Stop Recording' : 'Record'}
+                                    {/* {isRecording ? 'Stop Recording' : 'Record'} */}
+                                </button>
+                                <button
+                                    className="preview-button"
+                                    onClick={handlePreviewPlayPause}
+                                    disabled={!newVoice.audio}
+                                    style={{
+                                        backgroundColor: !newVoice.audio ? 'gray' : (isPreviewing ? '#ffc107' : 'black'), // Gray when disabled, yellow for pause, green for play
+                                    }}
+                                >
+                                    <FontAwesomeIcon icon={isPreviewing ? faPause : faPlay} />
+                                    {/* {isPreviewing ? 'Pause Preview' : 'Play Preview'} */}
+                                </button>
+                                <button
+                                    onClick={handleAddVoice}
+                                    disabled={!newVoice.audio}
+                                    className={isProcessing ? 'animate-border' : ''}
+                                    style={{
+                                        padding: '10px 20px',
+                                        fontSize: '16px',
+                                        border: '2px solid transparent',
+                                        cursor: newVoice.audio ? 'pointer' : 'not-allowed',
+                                        backgroundColor: !newVoice.audio ? 'gray' : 'black',
+                                        color: 'white',
+                                        transition: 'background-color 0.3s',
+                                    }}
+                                >
+                                    Add Voice
                                 </button>
                             </div>
-                            {newVoice.audio && (
-                                <div className="preview-button-wrapper">
-                                    <button
-                                        className="preview-button"
-                                        onClick={handlePreviewPlayPause}
-                                    >
-                                        <FontAwesomeIcon icon={isPreviewing ? faPause : faPlay} />
-                                        {isPreviewing ? 'Pause Preview' : 'Play Preview'}
-                                    </button>
-                                </div>
-                            )}
-                            <button onClick={handleAddVoice}>Add Voice</button>
                         </div>
                     </div>
                 </div>

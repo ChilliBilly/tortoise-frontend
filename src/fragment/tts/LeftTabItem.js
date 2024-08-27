@@ -1,15 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const LeftTabItem = ({ src, alt, text, path }) => {
     const navigate = useNavigate();
+    const location = useLocation(); // Get the current location
+
 
     const handleClick = () => {
         if (path) {
             navigate(path);
         }
     };
+
+    const textColor = location.pathname === path ? '#367AFF' : '#757575'; // Blue if current path matches, gray otherwise
 
     return (
         <div
@@ -38,7 +42,7 @@ const LeftTabItem = ({ src, alt, text, path }) => {
             />
             <p
                 style={{
-                    color: '#757575',
+                    color: textColor,
                     fontSize: '14px',
                     margin: '0',
                     padding: '0',

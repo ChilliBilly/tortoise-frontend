@@ -90,13 +90,13 @@ export const updateUserVoice = (userId, voiceId, voiceData) =>
 export const getAllVoices = () => api.get("/voices/");
 export const getVoice = (voiceId) => api.get(`/voices/${voiceId}`);
 
-export const createAudio = async (audioData, user_id, title, description) => {
+export const createAudio = async (audioData, user_id, title, description, language) => {
   try {
     // Create a FormData object to send the audio data
     const formData = new FormData();
     formData.append('file', audioData);
     formData.append('voice_name', title)
-    formData.append('language', "vi");
+    formData.append('language', language);
     formData.append('description', description);
 
     // Send the POST request with FormData

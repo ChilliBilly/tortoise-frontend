@@ -355,7 +355,9 @@ function InputChatboxTabFragment() {
       console.log("PLAY--------");
       audioRef.current.play();
       intervalRef.current = setInterval(() => {
-        setCurrentTime(audioRef.current.currentTime);
+        if (audioRef.current != null) {
+          setCurrentTime(audioRef.current.currentTime);
+        }
       }, 10); // Adjust the interval as needed (100ms for smoother updates)
     }
     setIsPlaying(!isPlaying);
@@ -865,7 +867,7 @@ function InputChatboxTabFragment() {
                   style={{ width: '20px', height: '20px' }}
                 />
                 <p style={{ margin: '0', fontWeight: 'bold' }}>
-                  {selectedVoice ? selectedVoice.voice_name : 'Select Voice'}
+                  {selectedVoice ? selectedVoice.description : 'Select Voice'}
                 </p>
               </div>
               <AnimatePresence>

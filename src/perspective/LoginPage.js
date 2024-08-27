@@ -51,7 +51,7 @@ function LoginPage() {
     return (
         <div className="signup-container">
             <a href="/" className="logo-container">
-                <img src={PageLogo} alt="Website Logo" className="page-logo" /> Name
+                <img src={PageLogo} alt="Website Logo" className="page-logo" /> ChilliBilly
             </a>
             <div className="form-container">
                 <form onSubmit={handleSubmit}>

@@ -1,21 +1,26 @@
 import './LeftTabFragment.css';
 import personPortrait from '../../resources/images/person-portrait.jpg';
 import homeGray from '../../resources/images/home-gray.png';
-import ConvertTextBlue from '../../resources/images/convert-text-blue.png';
-import MicroGray from '../../resources/images/micro-gray.png';
-import CartGray from '../../resources/images/cart-gray.png';
-import bookGray from '../../resources/images/book-gray.png';
-import gearGray from '../../resources/images/gear-gray.png';
+import AudioGray from '../../resources/images/audio_gray_logo.svg';
+import AudioBlue from '../../resources/images/audio_blue_logo.svg';
+import MicroGray from '../../resources/images/micro_gray_logo.svg';
+import MicroBlue from '../../resources/images/micro_blue_logo.svg';
 import logo from '../../resources/images/logo.png';
-import logoutIcon from '../../resources/images/logout-icon.png';
+import logoutIcon from '../../resources/images/return_gray_logo.svg';
 import LeftTabItem from './LeftTabItem';
 import { getUser } from '../../service/DataService';
 import { useContext, useState, useEffect } from 'react';
-import { UserContext } from '../../context/UserContext'
+import { UserContext } from '../../context/UserContext';
+import { useLocation } from 'react-router-dom';
 
 function LeftTabFragment({ onLogout }) {
     const [userData, setUserData] = useState(null);
     const { userId } = useContext(UserContext);
+    const location = useLocation();
+
+    // Determine the icon based on the current path
+    const ttsSrc = location.pathname === "/tts" ? AudioBlue : AudioGray;
+    const voiceCloneSrc = location.pathname === "/voiceclone" ? MicroBlue : MicroGray;
 
     useEffect(() => {
         const getUserData = async () => {
@@ -47,13 +52,13 @@ function LeftTabFragment({ onLogout }) {
                             path="/"
                         />
                         <LeftTabItem
-                            src={ConvertTextBlue}
+                            src={ttsSrc}
                             alt="Convert Text Icon"
                             text="Convert Text"
                             path="/tts"
                         />
                         <LeftTabItem
-                            src={MicroGray}
+                            src={voiceCloneSrc}
                             alt="Voice Cloning Icon"
                             text="Voice Cloning"
                             path="/voiceclone"
@@ -63,7 +68,7 @@ function LeftTabFragment({ onLogout }) {
                 <div className="section">
                     <p className="section-header">SETTING</p>
                     <div className="section-items">
-                        <LeftTabItem src={gearGray} alt="Settings Icon" text="Settings" />
+                        {/* <LeftTabItem src={gearGray} alt="Settings Icon" text="Settings" /> */}
                         <div onClick={onLogout}>
                             <LeftTabItem src={logoutIcon} alt="Log Out Icon" text="Return" />
                         </div>

@@ -204,3 +204,6 @@ export const deleteTab = async (user_id, tab_id) => {
         }
     }
 }
+
+
+export const deleteVoice = async (user_id, voice_id) => api.delete(`/users/${user_id}/voices/${voice_id}`);

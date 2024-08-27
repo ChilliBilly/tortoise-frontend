@@ -3,8 +3,8 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 40px;
-    margin-top: 10px; 
-    padding-left: 20px; 
+    margin-top: 10px;
+    padding-left: 20px;
 }
 
 .add-voice-card {
@@ -29,8 +29,8 @@
 }
 
 .add-icon {
-    width: 40x; 
-    height: 40px; 
+    width: 40x;
+    height: 40px;
 }
 
 .add-voice-form {
@@ -41,6 +41,7 @@
 }
 
 .add-voice-form input,
+.add-voice-form select,
 .add-voice-form button {
     margin-bottom: 5px;
     padding: 10px;
@@ -61,7 +62,8 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(255, 255, 255, 0.863); /* Semi-transparent white */
+    background-color: rgba(255, 255, 255, 0.863);
+    /* Semi-transparent white */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -93,6 +95,25 @@
 }
 
 .modal-close-button img {
-    width: 20px; 
-    height: 20px; 
+    width: 20px;
+    height: 20px;
+}
+
+@keyframes borderAnimation {
+    0% {
+        border-color: transparent;
+        box-shadow: 0 0 0 0 blue;
+    }
+    50% {
+        border-color: blue;
+        box-shadow: 0 0 0 5px blue;
+    }
+    100% {
+        border-color: blue;
+        box-shadow: 0 0 0 0 blue;
+    }
+}
+
+.animate-border {
+    animation: borderAnimation 1s ease-out;
 }

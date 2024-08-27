@@ -291,7 +291,6 @@ function InputChatboxTabFragment() {
     selectGenerationRef.current = handleSelectGeneration;
     getVoiceList(userId)
       .then(response => {
-        console.log(response.data)
         setVoices(response.data);
       })
       .catch(error => {
@@ -544,6 +543,17 @@ function InputChatboxTabFragment() {
 
   const stopScroll = () => {
     setIsScrolling(false);
+  };
+
+  const handleDownload = () => {
+    if (audioSrc != null) {
+      const link = document.createElement('a');
+      link.href = audioSrc;
+      link.download = 'downloaded_audio.wav';  // Specify the name of the downloaded file
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
   const scroll = (e) => {
@@ -1008,8 +1018,7 @@ function InputChatboxTabFragment() {
                     <p style={{ margin: '0', padding: '0' }}>/</p>
                     <p style={{ margin: '0', padding: '0' }}>{new Date(duration * 1000).toISOString().substr(11, 8)}</p>
                   </div>
-                  <FontAwesomeIcon icon={faDownload}></FontAwesomeIcon>
-                  <FontAwesomeIcon icon={faAngleDown}></FontAwesomeIcon>
+                  <FontAwesomeIcon icon={faDownload} onClick={handleDownload} style={{ cursor: 'pointer' }}></FontAwesomeIcon>
                 </div>
               </div>
             </div>

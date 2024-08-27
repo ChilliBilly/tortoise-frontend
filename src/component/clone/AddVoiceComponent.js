@@ -6,6 +6,8 @@ import VoiceCardFragment from '../../fragment/clone/VoiceCardFragment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMicrophone, faStop, faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 import { createAudio } from '../../service/api'; // Replace with the actual path
+import { getVoiceList } from '../../service/DataService'; // Replace with the actual path
+
 import { UserContext } from '../../context/UserContext';
 
 function AddVoiceComponent() {
@@ -161,6 +163,20 @@ function AddVoiceComponent() {
             }
         };
     }, [isRecording]);
+
+    useEffect(() => {
+        const fetchVoices = async () => {
+            try {
+                const { data } = await getVoiceList(userId);
+                console.log(data);
+                setVoices(data); // Update the state with the fetched voices
+            } catch (error) {
+                console.error('Failed to fetch voices:', error);
+            }
+        };
+
+        fetchVoices();
+    }, [userId]);
 
     const handlePreviewPlayPause = () => {
         if (audioRef.current && newVoice.audio) {

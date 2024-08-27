@@ -76,8 +76,10 @@ function InputHistoryTabFragment() {
       }
 
       name = formattedDate + " | " + name
-
-      const duration = formatDuration(item.audio.audio_duration);
+      let duration = "0:0";
+      if (item.audio.audio_duration != null) {
+        duration = formatDuration(item.audio.audio_duration);
+      }
 
       return {
         id: item.id, // ID of the tab generation
@@ -119,7 +121,7 @@ function InputHistoryTabFragment() {
   };
 
   const handleGenerationClick = (item) => () => {
-    doSelectGeneration(item.tab_id, item.id);
+        doSelectGeneration(item.tab_id, item.id);
     if (item.status == "READY") {
       setAudioFile(`${AUDIO_API_URL}/user/${userId}/${item.audio_name}`, item.name);
     }

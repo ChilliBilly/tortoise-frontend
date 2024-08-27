@@ -4,11 +4,14 @@
     justify-content: space-between;
     padding: 30px 50px;
     background-color: #ffffff;
+    user-select: none;
 }
 
 .text-section {
     flex: 1;
     padding-right: 50px;
+    user-select: none;
+
 }
 
 .main-section h1 {
@@ -16,6 +19,7 @@
     font-weight: bold;
     color: #1a1a1a;
     margin-bottom: 20px;
+    user-select: none;
 }
 
 .main-section p {
@@ -23,7 +27,9 @@
     color: #666666;
     line-height: 1.6;
     margin-bottom: 30px;
-    max-width: 600px; /* Ensure the paragraph spans more lines */
+    max-width: 600px;
+    user-select: none;
+    /* Ensure the paragraph spans more lines */
 }
 
 .get-started-button {
@@ -38,15 +44,18 @@
     width: 180px;
     font-size: 1rem;
     cursor: pointer;
+    user-select: none;
 }
 
 .get-started-button:hover {
     background: linear-gradient(90deg, #4a00e0, #8e2de2);
+    user-select: none;
 }
 
 .image-section {
     flex: 1;
     text-align: right;
+    user-select: none;
 }
 
 .globe-image {
@@ -54,4 +63,5 @@
     height: auto;
     margin-left: auto;
     margin-right: auto;
+    user-select: none;
 }

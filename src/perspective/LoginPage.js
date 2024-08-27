@@ -25,7 +25,7 @@ function LoginPage() {
             const response = await loginAPI({ username, password });
             const userId = response.data.user.id;
             const token = response.data.access_token;
-            login(userId, token);
+            login(userId, token, username); // Pass username to login
             if (token) {
                 navigate(redirectTo); // Navigate to the intended page
             }
@@ -33,6 +33,7 @@ function LoginPage() {
             setError(error.message || 'Login failed');
         }
     };
+
 
     const handleGoogleSignIn = () => {
         const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth`;

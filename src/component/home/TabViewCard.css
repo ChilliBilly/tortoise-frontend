@@ -46,7 +46,7 @@
     z-index: 999;
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.2s ease-in-out;
+    transition: opacity 0.5s ease-in-out;
 }
 
 .icon-background {
@@ -68,14 +68,14 @@
 .tab-text {
     position: relative;
     z-index: 2;
-    transition: transform 0.1s ease, color 0.1s ease;
+    transition: transform 0.3s ease, color 0.3s ease;
 }
 
 .tab-option h2 {
     font-size: 36px;
     margin-bottom: 10px;
     color: #2c3e50;
-    transition: color 0.1s ease, transform 0.1s ease;
+    transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .tab-option p {
@@ -102,7 +102,7 @@
 
 .tab-option.selected {
     z-index: 998;
-    transform: scale(4) !important;
+    transform: scale(10) !important;
 }
 
 .tab-option.selected .tab-text {

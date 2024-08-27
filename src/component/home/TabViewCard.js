@@ -55,6 +55,7 @@ const TabViewCard = () => {
                 onClick={() => handleCardClick('/tts')}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                transition={{ duration: 0.3 }}
                 layoutId="tab-option" // Add this layoutId for the animation effect
             >
                 <div className="tab-text">
@@ -71,6 +72,7 @@ const TabViewCard = () => {
                 onClick={() => handleCardClick('/voiceclone')}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                transition={{ duration: 0.3 }}
                 layoutId="tab-option" // Add this layoutId for the animation effect
             >
                 <div className="tab-text">

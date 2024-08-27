@@ -157,7 +157,7 @@ export const createTab = async (tab) => {
 
 export const createTabGeneration = async (tabGeneration, selectedVoice) => {
     try {
-        const response = await api.post(`/users/${tabGeneration.user_id}/tabs/${tabGeneration.tab_id}/tab_generations`,
+        const response = await api.post(`/users/${tabGeneration.user_id}/tabs/${tabGeneration.tab_id}/tab_generations/`,
             { tab_id: tabGeneration.tab_id, text_entry_content: tabGeneration.text_entry_content, language: selectedVoice.language, voice_id: selectedVoice.id });
         console.log("Under this is data:")
         console.log(response.data)

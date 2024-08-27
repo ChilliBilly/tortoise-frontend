@@ -1,53 +1,93 @@
 .top-navbar {
-    background-color: white;
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 10px 50px; /* Added more padding */
+    background-color: #f8f9fa;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 10px 30px;
+    /* Adjusted padding */
     z-index: 1000;
 }
 
 .brand {
     font-size: 1.5rem;
-    font-weight: bold;
+    font-weight: 700;
     display: flex;
     align-items: center;
 }
 
 .brand img {
-    margin-right: 10px;
+    margin-right: 15px;
+    /* Added more spacing */
+}
+
+.brand-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
 }
 
 .top-navbar .nav-item {
-    margin-left: 20px;
+    margin-left: 25px;
+    /* Increased spacing */
     font-size: 1rem;
-    font-weight: bold;
-    color: #1a1a1a;
+    font-weight: 600;
+    color: #333;
+    transition: color 0.3s ease;
 }
 
 .top-navbar .nav-item:hover {
-    color: #4a00e0;
+    color: #0056b3;
+    /* Changed hover color */
+}
+
+.logout-button {
+    margin-left: 15px;
+    background-color: #dc3545 !important;
+    border: none;
+    padding: 8px 16px;
+    color: #fff;
+    border-radius: 20px !important;
+    font-weight: 600 !important;
+    transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+    background-color: #c82333 !important;
 }
 
 .sign-up-button {
-    margin-left: 20px;
-    background-color: #4a00e0 !important;
+    margin-left: 15px;
+    background-color: #007bff !important;
     border: none;
-    padding: 5px 15px;
+    padding: 8px 16px;
     color: #fff;
-    border-radius: 25px !important;
-    font-weight: bold !important;
+    border-radius: 20px !important;
+    font-weight: 600 !important;
+    transition: background-color 0.3s ease;
 }
 
 .sign-up-button:hover {
-    background-color: #8e2de2 !important;
+    background-color: #0056b3 !important;
+}
+
+.navbar-text {
+    font-size: 1rem;
+    font-weight: 500;
 }
 
 @media (max-width: 768px) {
     .top-navbar .nav-item {
-        margin-left: 10px;
+        margin-left: 15px;
+        /* Adjusted for smaller screens */
         font-size: 0.9rem;
     }
 
-    .sign-up-button {
-        padding: 5px 10px;
+    .brand img {
+        height: 30px;
+        /* Adjusted for smaller screens */
+    }
+
+    .sign-up-button,
+    .logout-button {
+        padding: 6px 12px;
+        /* Adjusted padding */
     }
 }

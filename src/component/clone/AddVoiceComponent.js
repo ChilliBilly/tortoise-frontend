@@ -5,6 +5,7 @@ import addIcon from '../../resources/images/add-icon.png';
 import VoiceCardFragment from '../../fragment/clone/VoiceCardFragment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMicrophone, faStop, faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
+import { createAudio } from '../../service/api'; // Replace with the actual path
 
 function AddVoiceComponent() {
     const [voices, setVoices] = useState([]);
@@ -13,6 +14,7 @@ function AddVoiceComponent() {
         title: '',
         description: '',
         audio: null,
+        status: 'processing',
     });
     const [isRecording, setIsRecording] = useState(false);
     const [isPreviewing, setIsPreviewing] = useState(false);
@@ -35,10 +37,35 @@ function AddVoiceComponent() {
         }));
     };
 
-    const handleAddVoice = () => {
-        setVoices((prevVoices) => [...prevVoices, newVoice]);
-        setNewVoice({ title: '', description: '', audio: null });
-        setShowForm(false);
+    const handleAddVoice = async () => {
+        // Create a temporary card with "processing" status
+        const tempVoice = { ...newVoice, status: 'processing' };
+        setVoices((prevVoices) => [...prevVoices, tempVoice]);
+
+        try {
+            const audioBlob = new Blob([/* audio data */], { type: 'audio/mpeg' }); // Create a Blob or get from input
+            const data = await createAudio(audioBlob);
+
+            // Update the voice with the received data and set status to 'ready'
+            setVoices((prevVoices) =>
+                prevVoices.map((voice) =>
+                    voice === tempVoice ? { ...voice, ...data, status: 'ready' } : voice
+                )
+            );
+        } catch (error) {
+            console.error('Failed to create audio:', error);
+
+            // Update the voice status to 'failed' on error
+            setVoices((prevVoices) =>
+                prevVoices.map((voice) =>
+                    voice === tempVoice ? { ...voice, status: 'failed' } : voice
+                )
+            );
+        } finally {
+            // Reset form and hide modal
+            setNewVoice({ title: '', description: '', audio: null });
+            setShowForm(false);
+        }
     };
 
     const handleDeleteVoice = (voiceToDelete) => {
@@ -49,10 +76,14 @@ function AddVoiceComponent() {
 
     const handlePlayPause = (audioFile) => {
         if (audioRef.current) {
-            if (audioFile !== audioRef.current.src) {
-                audioRef.current.src = URL.createObjectURL(audioFile);
-                audioRef.current.load();
+            if (audioRef.current.src) {
+                URL.revokeObjectURL(audioRef.current.src);
+                audioRef.current.src = '';
             }
+
+            audioRef.current.src = URL.createObjectURL(audioFile);
+            audioRef.current.load();
+
             if (isPlaying) {
                 audioRef.current.pause();
                 setIsPlaying(false);
@@ -90,11 +121,33 @@ function AddVoiceComponent() {
     const stopRecording = () => {
         if (mediaRecorderRef.current) {
             mediaRecorderRef.current.stop();
-            // Also stop and close the stream to ensure no recording indicator remains
             const stream = mediaRecorderRef.current.stream;
             stream.getTracks().forEach(track => track.stop());
+            mediaRecorderRef.current = null;
         }
     };
+
+    useEffect(() => {
+        const audioElement = audioRef.current;
+        if (audioElement) {
+            const handleAudioEnd = () => {
+                setIsPlaying(false);
+                setIsPreviewing(false);
+            };
+
+            audioElement.addEventListener('ended', handleAudioEnd);
+
+            return () => {
+                audioElement.removeEventListener('ended', handleAudioEnd);
+            };
+        }
+
+        return () => {
+            if (audioRef.current && audioRef.current.src) {
+                URL.revokeObjectURL(audioRef.current.src);
+            }
+        };
+    }, []);
 
     useEffect(() => {
         return () => {
@@ -108,19 +161,21 @@ function AddVoiceComponent() {
     }, [isRecording]);
 
     const handlePreviewPlayPause = () => {
-        if (audioRef.current) {
-            if (newVoice.audio) {
-                if (!audioRef.current.src) {
-                    audioRef.current.src = URL.createObjectURL(newVoice.audio);
-                    audioRef.current.load();
-                }
-                if (isPreviewing) {
-                    audioRef.current.pause();
-                    setIsPreviewing(false);
-                } else {
-                    audioRef.current.play();
-                    setIsPreviewing(true);
-                }
+        if (audioRef.current && newVoice.audio) {
+            if (audioRef.current.src) {
+                URL.revokeObjectURL(audioRef.current.src);
+                audioRef.current.src = '';
+            }
+
+            audioRef.current.src = URL.createObjectURL(newVoice.audio);
+            audioRef.current.load();
+
+            if (isPreviewing) {
+                audioRef.current.pause();
+                setIsPreviewing(false);
+            } else {
+                audioRef.current.play();
+                setIsPreviewing(true);
             }
         }
     };

@@ -10,7 +10,7 @@ import { doFetch } from "./fragment/tts/InputHistoryTabFragment";
 import React, { useEffect, useContext, useState } from 'react';
 import { UserProvider, UserContext } from './context/UserContext';
 import { verifyTokenAPI } from "./service/DataService"
-
+import TabViewCard from './component/home/TabViewCard';
 
 
 function App() {
@@ -32,6 +32,7 @@ function App() {
           <Route path='/' element={<HomePage />} />
           <Route path='/login' element={<LoginPage />} />
           <Route path='/signup' element={<SignUpPage />} />
+          <Route path='/tabview' element={<ProtectedRoute><TabViewCard /></ProtectedRoute>} />
           <Route path='/tts' element={<ProtectedRoute><TextToSpeechPage /></ProtectedRoute>} />
           <Route path='/voiceclone' element={<ProtectedRoute><VoiceCloningPage /></ProtectedRoute>} />
         </Routes>
@@ -46,30 +47,28 @@ const ProtectedRoute = ({ children }) => {
   const [isValidToken, setIsValidToken] = useState(null);
 
   useEffect(() => {
-    if (loading) {
-      return; // Do nothing while loading
-    }
+    if (loading) return;
 
     const verifyToken = async () => {
       try {
         const response = await verifyTokenAPI(token);
-        if (response.data.message == 'Token is valid') {
+        if (response.data.message === 'Token is valid') {
           setIsValidToken(true);
         } else {
           setIsValidToken(false);
-          navigate('/login');
+          navigate('/login', { state: { from: window.location.pathname } });
         }
       } catch (error) {
         console.error("Token verification failed", error);
         setIsValidToken(false);
-        navigate('/login');
+        navigate('/login', { state: { from: window.location.pathname } });
       }
     };
 
     if (token) {
       verifyToken();
     } else {
-      navigate('/login');
+      navigate('/login', { state: { from: window.location.pathname } });
     }
   }, [token, loading, navigate]);
 

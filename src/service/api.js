@@ -59,7 +59,7 @@ export const loginWithGoogle = () => {
   window.location.href = `${API_URL}/login/google`;
 };
 
-export const loginAPI = (credentials) => api.post("/login", credentials);
+export const loginAPI = (credentials) => api.post("/login/", credentials);
 
 export const createGuest = () => api.post("/guests");
 export const getGuests = () => api.get("/guests");
@@ -85,22 +85,34 @@ export const getVoice = (voiceId) => api.get(`/voices/${voiceId}`);
 
 export const createAudio = async (audioData) => {
   try {
-    const response = await api.post("/audios/", audioData);
+    // Create a FormData object to send the audio data
+    const formData = new FormData();
+    formData.append('audio', audioData);
+
+    // Send the POST request with FormData
+    const response = await axios.post('/audios/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data', // Ensure the correct content type for file uploads
+      },
+    });
+
     return response.data;
   } catch (error) {
-    console.error("Error in createAudio:", error);
+    console.error('Error in createAudio:', error);
+
     if (error.response) {
-      console.error("Error response:", error.response);
+      console.error('Error response:', error.response);
       throw error.response.data || error.response;
     } else if (error.request) {
-      console.error("Error request:", error.request);
-      throw new Error("No response received from server");
+      console.error('Error request:', error.request);
+      throw new Error('No response received from server');
     } else {
-      console.error("Error message:", error.message);
-      throw new Error("Error setting up the request");
+      console.error('Error message:', error.message);
+      throw new Error('Error setting up the request');
     }
   }
 };
+
 export const getAudio = (audioId) => api.get(`/audios/${audioId}`);
 export const getUserAudios = (userId) => api.get(`/audios/?user_id=${userId}`);
 export const getTextEntryAudios = (textEntryId) =>

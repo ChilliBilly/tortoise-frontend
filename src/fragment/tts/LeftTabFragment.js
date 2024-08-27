@@ -40,11 +40,24 @@ function LeftTabFragment({ onLogout }) {
                 <div className="section">
                     <p className="section-header">MAIN</p>
                     <div className="section-items">
-                        <LeftTabItem src={homeGray} alt="Home Icon" text="Home" />
-                        <LeftTabItem src={ConvertTextBlue} alt="Convert Text Icon" text="Convert Text" />
-                        <LeftTabItem src={MicroGray} alt="Voice Cloning Icon" text="Voice Cloning" />
-                        <LeftTabItem src={CartGray} alt="Buy Package Icon" text="Buy Package" />
-                        <LeftTabItem src={bookGray} alt="User Guide Icon" text="User Guide" />
+                        <LeftTabItem
+                            src={homeGray}
+                            alt="Home Icon"
+                            text="Home"
+                            path="/"
+                        />
+                        <LeftTabItem
+                            src={ConvertTextBlue}
+                            alt="Convert Text Icon"
+                            text="Convert Text"
+                            path="/tts"
+                        />
+                        <LeftTabItem
+                            src={MicroGray}
+                            alt="Voice Cloning Icon"
+                            text="Voice Cloning"
+                            path="/voiceclone"
+                        />
                     </div>
                 </div>
                 <div className="section">
@@ -52,7 +65,7 @@ function LeftTabFragment({ onLogout }) {
                     <div className="section-items">
                         <LeftTabItem src={gearGray} alt="Settings Icon" text="Settings" />
                         <div onClick={onLogout}>
-                            <LeftTabItem src={logoutIcon} alt="Log Out Icon" text="Log Out" />
+                            <LeftTabItem src={logoutIcon} alt="Log Out Icon" text="Return" />
                         </div>
                     </div>
                 </div>

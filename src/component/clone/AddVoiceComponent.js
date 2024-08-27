@@ -7,10 +7,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMicrophone, faStop, faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 import { createAudio } from '../../service/api'; // Replace with the actual path
 import { getVoiceList, deleteVoice } from '../../service/DataService'; // Replace with the actual path
+import { useError } from '../../context/ErrorContext';
 
 import { UserContext } from '../../context/UserContext';
 
 function AddVoiceComponent() {
+    const { showError } = useError();
     const [isProcessing, setIsProcessing] = useState(false); // State to track if processing is happening
     const { userId } = useContext(UserContext);
     const [voices, setVoices] = useState([]);
@@ -60,8 +62,7 @@ function AddVoiceComponent() {
                 )
             );
         } catch (error) {
-            console.error('Failed to create audio:', error);
-
+            showError("Failed to create audio: " + error);
             // Update the voice status to 'failed' on error
             setVoices((prevVoices) =>
                 prevVoices.map((voice) =>
@@ -82,7 +83,7 @@ function AddVoiceComponent() {
                 prevVoices.filter((voice) => voice !== voiceToDelete)
             );
         } catch (error) {
-            console.log("Unable to delete voice: " + error)
+            showError("Unable to delete voice: " + error);
         }
     };
 
@@ -125,7 +126,7 @@ function AddVoiceComponent() {
 
             mediaRecorderRef.current.start();
         } catch (error) {
-            console.error('Error starting recording:', error);
+            showError("Error starting recording:: " + error);
             setIsRecording(false);
         }
     };
@@ -176,10 +177,9 @@ function AddVoiceComponent() {
         const fetchVoices = async () => {
             try {
                 const { data } = await getVoiceList(userId);
-                console.log(data);
                 setVoices(data); // Update the state with the fetched voices
             } catch (error) {
-                console.error('Failed to fetch voices:', error);
+                showError("Failed to fetch voices: " + error);
             }
         };
 

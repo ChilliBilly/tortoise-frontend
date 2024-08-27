@@ -22,7 +22,6 @@ function SignUpPage() {
 
         try {
             const response = await createUser({ username, email, password, role });
-            console.log('Signup successful:', response);
             navigate('/login');
         } catch (error) {
             setError(error.message || 'Signup failed');

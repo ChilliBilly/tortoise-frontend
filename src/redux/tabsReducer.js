@@ -9,7 +9,6 @@ const initialState = {
 };
 
 const tabsReducer = produce((draft, action) => {
-    console.log(action.type);
     switch (action.type) {
         case 'SET_TAB_DATA':
             draft.tabData = action.payload;

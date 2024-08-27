@@ -9,8 +9,10 @@ import VoiceCloningPage from './perspective/VoiceCloningPage';
 import { doFetch } from "./fragment/tts/InputHistoryTabFragment";
 import React, { useEffect, useContext, useState } from 'react';
 import { UserProvider, UserContext } from './context/UserContext';
+import { ErrorProvider } from './context/ErrorContext';
 import { verifyTokenAPI } from "./service/DataService"
 import TabViewCard from './component/home/TabViewCard';
+import ErrorPopup from './error/ErrorPopup';
 
 
 function App() {
@@ -26,18 +28,21 @@ function App() {
 
 
   return (
-    <UserProvider>
-      <div className="App">
-        <Routes>
-          <Route path='/' element={<HomePage />} />
-          <Route path='/login' element={<LoginPage />} />
-          <Route path='/signup' element={<SignUpPage />} />
-          <Route path='/tabview' element={<ProtectedRoute><TabViewCard /></ProtectedRoute>} />
-          <Route path='/tts' element={<ProtectedRoute><TextToSpeechPage /></ProtectedRoute>} />
-          <Route path='/voiceclone' element={<ProtectedRoute><VoiceCloningPage /></ProtectedRoute>} />
-        </Routes>
-      </div>
-    </UserProvider>
+    <ErrorProvider>
+      <UserProvider>
+        <div className="App">
+          <Routes>
+            <Route path='/' element={<HomePage />} />
+            <Route path='/login' element={<LoginPage />} />
+            <Route path='/signup' element={<SignUpPage />} />
+            <Route path='/tabview' element={<ProtectedRoute><TabViewCard /></ProtectedRoute>} />
+            <Route path='/tts' element={<ProtectedRoute><TextToSpeechPage /></ProtectedRoute>} />
+            <Route path='/voiceclone' element={<ProtectedRoute><VoiceCloningPage /></ProtectedRoute>} />
+          </Routes>
+          <ErrorPopup /> {/* Ensure ErrorPopup is rendered at the root level */}
+        </div>
+      </UserProvider>
+    </ErrorProvider>
   );
 }
 
@@ -59,7 +64,6 @@ const ProtectedRoute = ({ children }) => {
           navigate('/login', { state: { from: window.location.pathname } });
         }
       } catch (error) {
-        console.error("Token verification failed", error);
         setIsValidToken(false);
         navigate('/login', { state: { from: window.location.pathname } });
       }

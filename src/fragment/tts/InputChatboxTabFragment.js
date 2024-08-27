@@ -6,6 +6,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import "./InputChatboxTabFragment.css";
 import image from "../../resources/images/images.png";
 import { UserContext } from '../../context/UserContext';
+import { useError } from '../../context/ErrorContext';
 import {
   faUndoAlt,
   faRedoAlt,
@@ -179,6 +180,7 @@ const arrowVariants = {
 };
 
 function InputChatboxTabFragment() {
+  const { showError } = useError();
   const dispatch = useDispatch();
   const tabData = useSelector((state) => state.tabs.present.tabData);
   const selectedTabId = useSelector(
@@ -252,8 +254,6 @@ function InputChatboxTabFragment() {
     let initialSessions = [{ text: "" }]; // Default value for sessions
 
     try {
-      // Fetch the live tabs by user ID
-      console.log("This is the userId: " + userId);
       const tabs = await getLiveTabByUserId(userId);
       // Attempt to fetch the initial chat box session if there are tabs available
       if (tabs.data.length > 0) {
@@ -266,7 +266,7 @@ function InputChatboxTabFragment() {
       }
       dispatch(initApp(tabs, initialSessions));
     } catch (error) {
-      console.error("Error fetching tabs:", error);
+      showError("Error fetching tabs: " + error);
       dispatch(initApp([], [{ text: "" }])); // Use actual tabs if they were fetched
     }
   };
@@ -283,7 +283,7 @@ function InputChatboxTabFragment() {
       const sessions = [{ text: item.data.text_entry_content }];
       dispatch(selectGeneration(tabId, sessions));
     } catch (error) {
-      console.error("Error fetching item:", error);
+      showError("Error fetching item: " + error);
     }
   };
 
@@ -294,7 +294,7 @@ function InputChatboxTabFragment() {
         setVoices(response.data);
       })
       .catch(error => {
-        console.error("Failed to load voices: ", error);
+        showError("Failed to load voices: " + error);
       });
   }, []);
 
@@ -311,19 +311,20 @@ function InputChatboxTabFragment() {
   const handleGenerateOuput = async () => {
     try {
       if (chatBoxSessionsByTab[selectedTabId][0].text == "") {
-        throw new Error("Text cannot be null.");
+        showError("Text cannot be null.");
+        return;
       }
       if (selectedVoice == null) {
-        throw new Error("Voice is not selected");
+        showError("Voice is not selected.");
+        return;
       }
-      console.log(selectedVoice.id)
       createTabGeneration({
         user_id: userId,
         tab_id: selectedTabId,
         text_entry_content: chatBoxSessionsByTab[selectedTabId][0].text,
       }, selectedVoice);
     } catch (error) {
-      console.error("Error creating tab generation:", error);
+      showError("Error creating tab generation:" + error);
     }
   };
 
@@ -348,11 +349,9 @@ function InputChatboxTabFragment() {
 
   const handlePlayPause = () => {
     if (isPlaying) {
-      console.log("PAUSE---------");
       audioRef.current.pause();
       clearInterval(intervalRef.current);
     } else {
-      console.log("PLAY--------");
       audioRef.current.play();
       intervalRef.current = setInterval(() => {
         if (audioRef.current != null) {
@@ -426,7 +425,7 @@ function InputChatboxTabFragment() {
       // Dispatch the action to create a new tab
       dispatch(createNewTab(newTab, response.id, initialSessions));
     } catch (error) {
-      console.error("Error creating tab:", error);
+      showError("Error creating tab:" + error);
     }
   };
 
@@ -440,14 +439,12 @@ function InputChatboxTabFragment() {
           sessions = await getChatBoxSession(userId, tabId);
           sessions = [{ text: sessions.data.text_entry_content }];
         } catch (sessionError) {
-          console.error("Error fetching chat box session:", sessionError);
-          // Set default value for initialSessions if an error occurs
           sessions = [{ text: "" }];
         }
       }
       dispatch(changeTab(tabId, sessions));
     } catch (error) {
-      console.error("Error switching tab:", error);
+      showError("Error switching tab:" + error);
     }
   };
 
@@ -467,7 +464,7 @@ function InputChatboxTabFragment() {
       dispatch({ type: "UPDATE_TAB_NAME", payload: { id, newTabName } });
       dispatch({ type: "SET_IS_EDITING", payload: null });
     } catch (error) {
-      console.error("An error is occured: ", error);
+      showError("An error is occured: " + error);
     }
   };
 
@@ -476,10 +473,7 @@ function InputChatboxTabFragment() {
       await deleteTab(userId, id);
       dispatch(deleteExistingTab(id));
     } catch (error) {
-      console.error(
-        "An error is occured when trying to delete the tab: ",
-        error
-      );
+      showError("An error is occured when trying to delete the tab: " + error);
     }
   };
 

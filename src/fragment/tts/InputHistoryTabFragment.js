@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { doSelectGeneration, setAudioFile } from "./InputChatboxTabFragment";
 import { AnimatePresence, motion } from 'framer-motion';
 import { UserContext } from '../../context/UserContext';
+import { useError } from '../../context/ErrorContext';
 let fetchDataRef = null;
 
 export function doFetch() {
@@ -15,6 +16,7 @@ export function doFetch() {
   }
 }
 function InputHistoryTabFragment() {
+  const { showError } = useError();
   const selectedTabId = useSelector(
     (state) => state.tabs.present.selectedTabId
   );
@@ -49,7 +51,7 @@ function InputHistoryTabFragment() {
       setItems(transformedItems);
       setExistingItems(prevItems => new Set([...prevItems, ...transformedItems.map(item => item.id)]));
     } catch (error) {
-      console.error(`Error fetching ${tab === 'History' ? 'history' : 'all history'}:`, error);
+      // showError(`Error fetching ${tab === 'History' ? 'history' : 'all history'}:` + error);
       // Set a default fallback or handle it gracefully
       setItems([]); // Uncomment and adjust this line if needed
     }
@@ -121,7 +123,7 @@ function InputHistoryTabFragment() {
   };
 
   const handleGenerationClick = (item) => () => {
-        doSelectGeneration(item.tab_id, item.id);
+    doSelectGeneration(item.tab_id, item.id);
     if (item.status == "READY") {
       setAudioFile(`${AUDIO_API_URL}/user/${userId}/${item.audio_name}`, item.name);
     }

@@ -218,7 +218,7 @@ function AddVoiceComponent() {
                     />
                 ))}
                 <div className="add-voice-card" onClick={() => setShowForm(true)}>
-                    <div className="add-icon-wrapper">
+                    <div className="add-icon-wrapper" style={{ userSelect: 'none' }}>
                         <img src={addIcon} alt="Add" className="add-icon" />
                     </div>
                 </div>

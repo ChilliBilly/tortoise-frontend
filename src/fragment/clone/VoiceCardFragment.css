@@ -10,17 +10,20 @@
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
     background-color: #ffffff;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    user-select: none;
 }
 
 .voice-card:hover {
     transform: translateY(-5px);
     box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.2);
+    user-select: none;
 }
 
 .voice-card h3 {
     margin: 0;
     font-size: 1.1em;
     color: #333;
+    user-select: none;
 }
 
 .voice-card p {
@@ -28,6 +31,7 @@
     font-size: 0.9em;
     color: #666;
     line-height: 1.4;
+    user-select: none;
 }
 
 .voice-status {
@@ -39,6 +43,7 @@
     color: #888;
     text-transform: uppercase;
     font-weight: bold;
+    user-select: none;
 }
 
 .voice-card-buttons {
@@ -46,6 +51,7 @@
     justify-content: space-between;
     width: 100%;
     margin-top: auto;
+    user-select: none;
 }
 
 .voice-card-buttons button {
@@ -62,37 +68,45 @@
     color: #fff;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;
+    user-select: none;
 }
 
 .voice-card-buttons button:first-child {
     margin-left: 0;
+    user-select: none;
 }
 
 .voice-card-buttons button:last-child {
     margin-right: 0;
+    user-select: none;
 }
 
 .voice-card-buttons button:hover {
     background-color: #0056b3;
     transform: scale(1.05);
+    user-select: none;
 }
 
 .play-button {
     background-color: #28a745;
     border-color: #28a745;
+    user-select: none;
 }
 
 .play-button:hover {
     background-color: #218838;
+    user-select: none;
 }
 
 .delete-button {
     background-color: #dc3545;
     border-color: #dc3545;
+    user-select: none;
 }
 
 .delete-button:hover {
     background-color: #c82333;
+    user-select: none;
 }
 
 @media (hover: none) {
@@ -115,18 +129,21 @@
     cursor: pointer;
     transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+    user-select: none;
 }
 
 .delete-button:hover {
     background: linear-gradient(135deg, #ff7f7f, #ff5f5f);
     transform: translateY(-3px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    user-select: none;
 }
 
 .delete-button:active {
     background: linear-gradient(135deg, #e65054, #ff3b4c);
     transform: translateY(0);
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+    user-select: none;
 }
 
 .delete-button .fa-trash {

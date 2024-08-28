@@ -225,78 +225,119 @@ function AddVoiceComponent() {
             </div>
             {showForm && (
                 <div className="modal-overlay">
-                    <div className="modal-content">
-                        <button className="modal-close-button" onClick={() => setShowForm(false)}>
-                            <img src={closeIcon} alt="Close" />
-                        </button>
-                        <div className="add-voice-form">
-                            <h3>Add a new voice</h3>
-                            <input
-                                type="text"
-                                name="title"
-                                placeholder="Title"
-                                value={newVoice.title}
-                                onChange={handleInputChange}
-                            />
-                            <input
-                                type="text"
-                                name="description"
-                                placeholder="Description"
-                                value={newVoice.description}
-                                onChange={handleInputChange}
-                            />
-                            <div style={{ display: 'flex', gap: '10px' }}>
-                                <input
-                                    type="file"
-                                    name="audio"
-                                    accept="audio/*"
-                                    onChange={handleFileChange}
-                                />
-                                <select
-                                    name="language"
-                                    value={newVoice.language}
-                                    onChange={handleInputChange}
-                                    className="language-select"
-                                >
-                                    <option value="vi">Vietnamese</option>
-                                    <option value="en">English</option>
-                                </select>
-                            </div>
-                            <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', gap: '20px' }}>
-                                <button
-                                    className="record-button"
-                                    onClick={isRecording ? stopRecording : startRecording}
-                                >
-                                    <FontAwesomeIcon icon={isRecording ? faStop : faMicrophone} />
-                                    {/* {isRecording ? 'Stop Recording' : 'Record'} */}
-                                </button>
-                                <button
-                                    className="preview-button"
-                                    onClick={handlePreviewPlayPause}
-                                    disabled={!newVoice.audio}
-                                    style={{
-                                        backgroundColor: !newVoice.audio ? 'gray' : (isPreviewing ? '#ffc107' : 'black'), // Gray when disabled, yellow for pause, green for play
-                                    }}
-                                >
-                                    <FontAwesomeIcon icon={isPreviewing ? faPause : faPlay} />
-                                    {/* {isPreviewing ? 'Pause Preview' : 'Play Preview'} */}
-                                </button>
-                                <button
-                                    onClick={handleAddVoice}
-                                    disabled={!newVoice.audio}
-                                    className={isProcessing ? 'animate-border' : ''}
-                                    style={{
-                                        padding: '10px 20px',
-                                        fontSize: '16px',
-                                        border: '2px solid transparent',
-                                        cursor: newVoice.audio ? 'pointer' : 'not-allowed',
-                                        backgroundColor: !newVoice.audio ? 'gray' : 'black',
-                                        color: 'white',
-                                        transition: 'background-color 0.3s',
-                                    }}
-                                >
-                                    Add Voice
-                                </button>
+                    <div style={{ width: '100%', maxWidth: '1500px', background: '#fff', borderRadius: '20px', boxShadow: '0px 0px 15px rgba(0, 0, 0, 0.2)', userSelect: 'none' }}>
+                        <div style={{ padding: '0', margin: '0', width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'end', height: '35px' }}>
+                            <button className="modal-close-button" style={{ userSelect: 'none' }} onClick={() => setShowForm(false)}>
+                                <img src={closeIcon} alt="Close" />
+                            </button>
+                        </div>
+                        <div style={{ width: '100%', maxWidth: '1500px', padding: '0px 20px', paddingBottom: '20px' }}>
+                            <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', height: '100%', width: '100%', gap: '20px' }}>
+                                <div className="add-voice-form" style={{ width: '40%' }}>
+                                    <h3>Add a new voice</h3>
+                                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', height: '100%', width: '100%', gap: '20px' }}>
+                                        <input
+                                            type="text"
+                                            name="title"
+                                            placeholder="Title"
+                                            value={newVoice.title}
+                                            onChange={handleInputChange}
+                                        />
+                                        <select
+                                            name="language"
+                                            value={newVoice.language}
+                                            onChange={handleInputChange}
+                                            className="language-select"
+                                        >
+                                            <option value="vi">Vietnamese</option>
+                                            <option value="en">English</option>
+                                        </select>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        name="description"
+                                        placeholder="Description"
+                                        value={newVoice.description}
+                                        onChange={handleInputChange}
+                                    />
+                                    <div style={{ margin: '0', padding: '0', display: 'flex', flexDirection: 'row', height: '100%', width: '100%', gap: '20px', alignItems: 'center' }}>
+                                        <input
+                                            type="file"
+                                            name="audio"
+                                            accept="audio/*"
+                                            onChange={handleFileChange}
+                                            style={{
+                                                height: '50px',
+                                                margin: '0'
+                                            }}
+                                        />
+                                        <button
+                                            // className="record-button"
+                                            style={{
+                                                width: '100px',
+                                                height: '50px',
+                                                padding: '0',
+                                                margin: '0'
+                                            }}
+                                            onClick={isRecording ? stopRecording : startRecording}
+                                        >
+                                            <FontAwesomeIcon icon={isRecording ? faStop : faMicrophone} />
+                                            {/* {isRecording ? 'Stop Recording' : 'Record'} */}
+                                        </button>
+                                        <button
+                                            // className="preview-button"
+                                            onClick={handlePreviewPlayPause}
+                                            disabled={!newVoice.audio}
+                                            style={{
+                                                padding: '0',
+                                                margin: '0',
+                                                backgroundColor: !newVoice.audio ? 'gray' : (isPreviewing ? '#ffc107' : 'black'),
+                                                width: '100px',
+                                                height: '50px',
+                                            }}
+                                        >
+                                            <FontAwesomeIcon icon={isPreviewing ? faPause : faPlay} />
+                                            {/* {isPreviewing ? 'Pause Preview' : 'Play Preview'} */}
+                                        </button>
+                                        <button
+                                            onClick={handleAddVoice}
+                                            disabled={!newVoice.audio}
+                                            className={isProcessing ? 'animate-border' : ''}
+                                            style={{
+
+                                                // padding: '10px 20px',
+                                                fontSize: '16px',
+                                                border: '2px solid transparent',
+                                                cursor: newVoice.audio ? 'pointer' : 'not-allowed',
+                                                backgroundColor: !newVoice.audio ? 'gray' : 'black',
+                                                color: 'white',
+                                                transition: 'background-color 0.3s',
+                                                width: '100px',
+                                                height: '50px',
+                                            }}
+                                        >
+                                            Add
+                                        </button>
+                                    </div>
+                                </div>
+                                <div style={{ width: '60%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingLeft: '20px', paddingRight: '20px', paddingTop: '20px', paddingBottom: '5px', boxSizing: 'border-box', backgroundColor: '#f9f9f9', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+                                    <h6 style={{ marginBottom: '16px', fontSize: '18px', color: '#333', textAlign: 'left' }}>
+                                        Please record and read this paragraph below:
+                                    </h6>
+                                    <div style={{ width: '100%', padding: '0 20px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', lineHeight: '1.6', color: '#555', textAlign: 'justify' }}>
+                                        {newVoice.language === "vi" ? (
+                                            <p>
+                                                Chiều nay, trên con phố quen thuộc, những cơn gió nhẹ thổi qua, mang theo hương thơm của hoa sữa đang nở rộ. Tiếng cười nói vang lên từ những quán cà phê ven đường, hòa quyện với tiếng xe cộ nhộn nhịp. Mặt trời dần lặn, để lại bầu trời một màu đỏ rực, như một bức tranh tuyệt đẹp. Khung cảnh này gợi nhớ đến những buổi chiều thanh bình của một thời đã qua, khi mọi thứ dường như diễn ra chậm rãi và đầy yên ả.
+                                            </p>
+                                        ) : (
+                                            <p>
+                                                This afternoon, on the familiar street, gentle breezes blew by, carrying the fragrance of blooming milkwood flowers. Laughter and chatter echoed from the roadside cafes, blending with the bustling sound of traffic. The sun gradually set, leaving the sky painted in a fiery red, like a magnificent painting. This scene evokes memories of peaceful afternoons from a time long past, when everything seemed to move slowly and serenely.
+                                            </p>
+                                        )}
+                                    </div>
+                                    <p style={{ marginTop: '10px', fontStyle: 'italic' }}>Notes: The audio should be at least 20 seconds.</p>
+                                </div>
+
                             </div>
                         </div>
                     </div>

@@ -16,9 +16,9 @@ function TopNavbarComponent() {
     if (loading) return <div>Loading...</div>;
 
     return (
-        <Navbar bg="light" expand="lg" className="top-navbar fixed-top">
-            <Container fluid>
-                <Navbar.Brand href="/" className="brand">
+        <Navbar bg="light" expand="lg" className="top-navbar fixed-top" style={{ userSelect: 'none' }}>
+            <Container fluid style={{ userSelect: 'none' }}>
+                <Navbar.Brand href="/" className="brand" style={{ userSelect: 'none' }}>
                     <img
                         src={Logo}
                         height="40"

@@ -24,8 +24,9 @@ function TopNavbarComponent() {
                         height="40"
                         className="d-inline-block align-top"
                         alt="Logo"
+                        style={{ userSelect: 'none' }}
                     />
-                    <span className="brand-name" style={{ fontSize: '25px' }}> ChilliBilly</span>
+                    <span className="brand-name" style={{ fontSize: '25px', userSelect: 'none' }}> ChilliBilly</span>
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav" className="justify-content-between">
@@ -35,7 +36,7 @@ function TopNavbarComponent() {
                     <Nav className="ml-auto d-flex align-items-center">
                         {token ? (
                             <>
-                                <span className="navbar-text mr-3" style={{ width: '200px' }}>
+                                <span className="navbar-text mr-3" style={{ width: '200px', userSelect: 'none' }}>
                                     Hello, {username || 'User'} {/* Display the username */}
                                 </span>
                                 <Button variant="danger" onClick={handleLogout} className="logout-button">Log Out</Button>

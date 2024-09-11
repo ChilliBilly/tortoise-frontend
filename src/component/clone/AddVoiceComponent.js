@@ -53,12 +53,12 @@ function AddVoiceComponent() {
 
         try {
             const audioBlob = new Blob([tempVoice.audio], { type: 'audio/mpeg' }); // Create a Blob or get from input
-            const data = await createAudio(audioBlob, userId, tempVoice.title, tempVoice.description, tempVoice.language);
+            const data = await createAudio(audioBlob, userId, tempVoice.description, tempVoice.title, tempVoice.language);
 
             // Update the voice with the received data and set status to 'ready'
             setVoices((prevVoices) =>
                 prevVoices.map((voice) =>
-                    voice === tempVoice ? { ...voice, ...data, status: 'ready' } : voice
+                    voice === tempVoice ? { ...voice, ...data, status: 'processing' } : voice
                 )
             );
         } catch (error) {

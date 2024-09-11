@@ -8,12 +8,14 @@
     padding: 0;
     overflow: hidden;
     position: relative;
+    user-select: none;
 }
 
 .tab-options-container {
     display: flex;
     justify-content: space-between;
     width: 100%;
+    user-select: none;
 }
 
 .tab-option {
@@ -34,6 +36,7 @@
     position: relative;
     overflow: hidden;
     transform: perspective(1000px);
+    user-select: none;
 }
 
 .full-screen-animation {
@@ -47,6 +50,7 @@
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.5s ease-in-out;
+    user-select: none;
 }
 
 .icon-background {
@@ -56,6 +60,7 @@
     transform: translate(-50%, -50%);
     z-index: 1;
     opacity: 0.2;
+    user-select: none;
 }
 
 .tts-icon .icon,
@@ -63,12 +68,14 @@
     font-size: 150px;
     color: lightgray;
     filter: blur(1px);
+    user-select: none;
 }
 
 .tab-text {
     position: relative;
     z-index: 2;
     transition: transform 0.3s ease, color 0.3s ease;
+    user-select: none;
 }
 
 .tab-option h2 {
@@ -76,6 +83,7 @@
     margin-bottom: 10px;
     color: #2c3e50;
     transition: color 0.3s ease, transform 0.3s ease;
+    user-select: none;
 }
 
 .tab-option p {
@@ -83,28 +91,34 @@
     color: #7f8c8d;
     margin: 0;
     transition: color 0.3s ease, transform 0.3s ease;
+    user-select: none;
 }
 
 .tab-option:hover {
     background: linear-gradient(135deg, #ffffff, #e1e1e1);
     transform: translateY(-10px) scale(1.05);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+    user-select: none;
 }
 
 .tab-option:hover h2,
 .tab-option:hover p {
     color: #3498db;
+    user-select: none;
 }
 
 .tab-option:hover .tab-text {
     transform: translate3d(var(--x), var(--y), 0);
+    user-select: none;
 }
 
 .tab-option.selected {
     z-index: 998;
     transform: scale(10) !important;
+    user-select: none;
 }
 
 .tab-option.selected .tab-text {
     opacity: 0;
+    user-select: none;
 }

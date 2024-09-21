@@ -31,6 +31,9 @@ function TopNavbarComponent() {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav" className="justify-content-between">
                     <Nav className="mx-auto">
+                        <Nav.Link href="#services" className="nav-item">Services</Nav.Link>
+                        <Nav.Link href="#api" className="nav-item">API</Nav.Link>
+                        <Nav.Link href="#pricing" className="nav-item">Pricing</Nav.Link>
                         <Nav.Link href="#about" className="nav-item">About</Nav.Link>
                     </Nav>
                     <Nav className="ml-auto d-flex align-items-center">

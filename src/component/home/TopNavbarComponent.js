@@ -39,10 +39,10 @@ function TopNavbarComponent() {
                     <Nav className="ml-auto d-flex align-items-center">
                         {token ? (
                             <>
-                                <span className="navbar-text mr-3" style={{ width: '200px', userSelect: 'none' }}>
+                                <span className="navbar-text mr-3" style={{ width: '200px', userSelect: 'none', textAlign: 'right', marginRight: '20px' }}>
                                     Hello, {username || 'User'} {/* Display the username */}
                                 </span>
-                                <Button variant="danger" onClick={handleLogout} className="logout-button">Log Out</Button>
+                                <Button variant="danger" onClick={handleLogout} className="logout-button" style={{ width: '100px' }}>Log Out</Button>
                             </>
                         ) : (
                             <>
